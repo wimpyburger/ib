@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ config['sitename'] }}</title>
+    </head>
+    <body>
+        <h1>{{ config['sitename'] }} - Manage</h1>
+		<fieldset>
+			<legend>Manage Boards</legend>
+				<ul>
+					{% for board in boards %}
+					<li>{{ board.urlid }} - {{ board.title }}</li>
+					{% endfor %}
+				</ul>
+				<a href="?createboard">Create new board</a>
+		</fieldset>
+	</body>
+</html>
