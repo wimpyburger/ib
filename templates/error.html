@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>{{ config['sitename'] }}</title>
+        <title>Error - {{ config['sitename'] }}</title>
 		<link rel="stylesheet" href="{{ config.siteurl }}/{{ config.defaultcss }}">
     </head>
     <body>
         <h1>{{ config['sitename'] }}</h1>
-		<ul>
-			{% for board in boards %}
-			<li>{{ board.urlid }} - {{ board.title }}</li>
-			{% endfor %}
-		</ul>
+		<div class="errorbox">
+			<h2>ERROR</h2>
+			{{ errormsg }}
+		</div>
 	</body>
 </html>

@@ -20,8 +20,8 @@ function getPage($file, array $args) {
 	
 	if(!$twig) loadTwig();
 	$template = $twig->loadTemplate($file);
-	$config = array('config' => $config);
-	return $template->render(array_merge($config, $args));
+	$tconfig = array('config' => $config);
+	return $template->render(array_merge($tconfig, $args));
 }
 
 ?>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ board.title }} - {{ config.sitename }}</title>
+		<link rel="stylesheet" href="{{ config.siteurl }}/{{ config.defaultcss }}">
+		<meta charset="utf-8">
+    </head>
+    <body>
+        <h1>{{ board.urlid }} - {{ board.title }}</h1>
+		<form action="{{ config.siteurl }}/inc/post.php?board={{ board.urlid }}&parent=0" method="post">
+			Name: <input type="text" name="namefield"><br>
+			Subject: <input type="text" name="subjectfield"><br>
+			Message: <textarea name="textfield"></textarea><br>
+			<input type="submit" value="Post">
+		</form>
+		<hr>
+		{% for thread in threads %}
+			<div class="thread">
+				<b>{{ thread.subject }}</b> <i>{{ thread.name }}</i>
+				No.{{ thread.id }} - [<a href="res/{{ thread.id }}.html">Reply</a>]  at {{ thread.date }}
+				<div id="message">{{ thread.message|raw|nl2br }}</div>
+			</div>
+		{% endfor %}
+	</body>
+</html>

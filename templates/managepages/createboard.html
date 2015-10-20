@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ config.sitename }}</title>
+		<link rel="stylesheet" href="{{ config.siteurl }}/{{ config.defaultcss }}">
+		<meta charset="utf-8">
+    </head>
+    <body>
+        <h1>{{ config.sitename }} - Manage</h1>
+		<fieldset>
+			<legend>Create Board</legend>
+				<form action="?createboard" method="post">
+					Title: <input type="text" name="title"><br>
+					URL: <input type="text" name="urlid"> (Directory e.g. <b>b</b> or <b>x</b>)<br>
+					<input type="submit" value="Create">
+				</form>
+		</fieldset>
+	</body>
+</html>

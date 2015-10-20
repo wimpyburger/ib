@@ -1,0 +1,35 @@
+body {
+	font-family:sans-serif;
+	background: #EEE;
+	color:#444;
+	width:90%;
+	margin:auto;
+	font-size:18px;
+}
+
+fieldset {
+	margin-bottom:12px;
+}
+
+.thread {
+	background:#FFF;
+	padding:10px;
+	border-bottom:1px solid #BBB;
+}
+
+.reply {
+	background:#E5E5E5;
+	padding:10px;
+	border-bottom:1px solid #FFF;
+}
+
+#message {
+	margin-left:15px;
+}
+
+.notif {
+	border-radius:4px;
+	background: #FFF;
+	padding: 4px;
+	border: 1px solid #DDD;
+}

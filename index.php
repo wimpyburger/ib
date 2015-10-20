@@ -2,9 +2,10 @@
 
 require "inc/config.php";
 require "inc/templates.php";
+require "inc/functions.php";
 
 $conn = sqlConnect();
-
-echo getPage("index.html", array());
+$boards = getBoards($conn);
+die(getPage("index.html", array("boards"=>$boards)));
 
 ?>

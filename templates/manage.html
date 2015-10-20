@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>{{ config['sitename'] }}</title>
+        <title>{{ config.sitename }}</title>
+		<link rel="stylesheet" href="{{ config.siteurl }}/{{ config.defaultcss }}">
     </head>
     <body>
-        <h1>{{ config['sitename'] }} - Manage</h1>
+        <h1>{{ config.sitename }} - Manage</h1>
 		<fieldset>
 			<legend>Manage Boards</legend>
 				<ul>
@@ -13,6 +14,14 @@
 					{% endfor %}
 				</ul>
 				<a href="?createboard">Create new board</a>
+		</fieldset>
+		
+		<fieldset>
+			<legend>Maintenance</legend>
+				<ul>
+					<li><a href="?configure">Configure site settings</a></li>
+					<li><a href="?refreshstatic">Remake static pages</a></li>
+				</ul>
 		</fieldset>
 	</body>
 </html>
