@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ config.sitename }}</title>
+		<link rel="stylesheet" href="{{ config.siteurl }}/{{ config.defaultcss }}">
+		<meta charset="utf-8">
+    </head>
+    <body>
+        <h1>{{ config.sitename }} - Manage</h1>
+		<fieldset>
+			<legend>Create User Account</legend>
+				<form action="?createaccount" method="post">
+					Username: <input type="text" name="createusername"><br>
+					Password: <input type="password" name="createpassword"> (max 72 chars)<br>
+					<input type="submit" value="Create Account">
+				</form>
+		</fieldset>
+	</body>
+</html>

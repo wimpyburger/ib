@@ -11,5 +11,6 @@ $config['sqldb'] = "ib";
 $config['rootdir'] = dirname(__FILE__) . "/../";
 $config['minmessagechars'] = "1";
 $config['maxmessagechars'] = "1200";
+$config['defaultpostername'] = "Anonymous";
 
 ?>

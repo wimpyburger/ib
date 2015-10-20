@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>{{ config['sitename'] }}</title>
+        <title>{{ config.sitename }}</title>
 		<link rel="stylesheet" href="{{ config.siteurl }}/{{ config.defaultcss }}">
     </head>
     <body>
-        <h1>{{ config['sitename'] }}</h1>
+        <h1>{{ config.sitename }}</h1>
 		<ul>
 			{% for board in boards %}
-			<li>{{ board.urlid }} - {{ board.title }}</li>
+			<li><a href="{{ config.rooturl }}/{{ board.urlid }}">{{ board.urlid }}</a> - {{ board.title }}</li>
 			{% endfor %}
 		</ul>
 	</body>

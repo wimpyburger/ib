@@ -11,15 +11,23 @@ function installSite($conn) {
 	global $config;
 	$installsql = file_get_contents($config['rootdir'] . "inc/createtables.sql");
 	try {
-		$installquery = $conn->query($installsql);
+		$installquery = $conn->exec($installsql);
 	} catch(PDOException $ex) {
 		error("Couldn't create tables: " . $ex);
 	}
+	$username = "admin";
+	$password = '$2y$10$TAolHkHcItf5v7ZpWKsYPut6pmWNemNBpgkgEw8rqIY.9BATJeenG';
+	
+	// create admin account with username 'admin' and password 'test'
+	$stmt = $conn->prepare("INSERT INTO users (username, password) VALUES (:username, :password)"); // get threads
+	$stmt->bindParam(':username', $username, PDO::PARAM_STR);
+	$stmt->bindParam(':password', $password, PDO::PARAM_STR);
+	$stmt->execute();
 	
 	$config['installed'] = 1;
 	recreateConfig();
 	
-	completed("Script installed");
+	completed("Script installed. Login to the admin panel with username <b>admin</b> and password <b>test</b>");
 }
 
 function createBoard($conn, $title, $urlid) {
@@ -67,6 +75,7 @@ function createBoard($conn, $title, $urlid) {
 	mkdir($config['rootdir'] . "/" . $urlid);
 	mkdir($config['rootdir'] . "/" . $urlid . "/res");
 	createBoardIndex($conn, $urlid);
+	createSiteIndex($conn);
 	
 	// create config file
 	$configcontents = "<?php\n\n// use this file to overwrite defaults from inc/config.php\n\n?>";
@@ -173,6 +182,34 @@ function threadExists($conn, $urlid, $thread) {
 	} else {
 		return false;
 	}
+}
+
+function deletePost($conn, $urlid, $postid) {
+	global $config;
+	// check if its a thread
+	// thread - delete post, replies and reply page
+	$stmt = $conn->prepare("SELECT parent FROM posts_$urlid WHERE id = :postid");
+	$stmt->bindParam(":postid", $postid, PDO::PARAM_INT);
+	$stmt->execute();
+	$result = $stmt->fetch();
+	// delete post
+	$stmt = $conn->prepare("DELETE FROM posts_$urlid WHERE id = :postid");
+	$stmt->bindParam(':postid', $postid, PDO::PARAM_INT);
+	$stmt->execute();
+	// if it was a thread, delete replies and reply page
+	if($result['parent'] === 0) {
+		// delete replies
+		$stmt = $conn->prepare("DELETE FROM posts_$urlid WHERE parent = :postid");
+		$stmt->bindParam(':postid', $postid, PDO::PARAM_INT);
+		$stmt->execute();
+		// delete res page
+		unlink($config['rootdir'] . "/" . $urlid . "/res/" . $postid . ".html");
+	} else {
+		// remake parent thread
+		createReplyPage($conn, $urlid, $result['parent']);
+	}
+	// remake index page
+	createBoardIndex($conn, $urlid);
 }
 
 ?>

@@ -10,7 +10,7 @@
 			<legend>Manage Boards</legend>
 				<ul>
 					{% for board in boards %}
-					<li>{{ board.urlid }} - {{ board.title }}</li>
+					<li><a href="?viewboard&board={{ board.urlid }}">{{ board.urlid }}</a> - {{ board.title }}</li>
 					{% endfor %}
 				</ul>
 				<a href="?createboard">Create new board</a>
@@ -22,6 +22,14 @@
 					<li><a href="?configure">Configure site settings</a></li>
 					<li><a href="?refreshstatic">Remake static pages</a></li>
 				</ul>
+		</fieldset>
+		
+		<fieldset>
+			<legend>Users</legend>
+			<ul>
+				<li><a href="?logout">Log out</a></li>
+				<li><a href="?createaccount">Create user account</a></li>
+			</ul>
 		</fieldset>
 	</body>
 </html>

@@ -5,55 +5,46 @@ require "inc/templates.php";
 require "inc/functions.php";
 require "inc/generatepages.php";
 
-$conn = sqlConnect();
-$boards = getBoards($conn);
+session_set_cookie_params('time()+600', '/', $_SERVER['SERVER_NAME'], false, true);
+session_regenerate_id(true);
+session_start();
 
-if(isset($_GET['configure'])) {
-	if(isset($_POST['installed'])) {
-		foreach($_POST as $key=>$value) {
-			if(isset($config[$key])) {
-				$config[$key] = $value;
-			}
-		}
-		recreateConfig();
-		completed("Config updated");
+$conn = sqlConnect();
+
+if(isset($_POST['loginusername']) && isset($_POST['loginpassword'])) {
+	// check its valid
+	$stmt = $conn->prepare("SELECT password FROM users WHERE username = :username");
+	$stmt->bindParam(':username', $_POST['loginusername'], PDO::PARAM_STR);
+	$stmt->execute();
+	$passwordhash = $stmt->fetch()[0];
+	if(!$passwordhash) {
+		error("Invalid username or password"); // username doesn't exist
 	}
-	die(getPage("managepages/configure.html", array("config" => $config)));
+	if(password_verify($_POST['loginpassword'], $passwordhash)) {
+		$_SESSION['username'] = $_POST['loginusername'];
+	} else {
+		error("Invalid username or password"); // wrong pass
+	}
+}
+
+if(!$config['installed']) {
+	echo "Board not installed.<br><a href=\"?install\">Install now</a><br>Otherwise, change 'installed' value in config to 1";
 }
 
 if(isset($_GET['install'])) {
 	installSite($conn);
 }
 
-if(isset($_GET['createboard'])) {
-	if(isset($_POST['title']) && isset($_POST['urlid'])) {
-		createBoard($conn, $_POST['title'], $_POST['urlid']);
-		completed("Board created");
-	}
-	die(getPage("managepages/createboard.html", array("config" => $config)));
+// very basic login stuff
+if(!isset($_SESSION['username'])) {
+	die(getPage("managepages/login.html", array()));
 }
 
-if(isset($_GET['refreshstatic'])) {
-	$boards = getBoards($conn);
-	$completedtext = "";
-	foreach($boards as $board) {
-		// create index page
-		createBoardIndex($conn, $board['urlid']);
-		$completedtext .= "<b>" . $board['urlid'] . "</b> index page created<br>";
-		// create reply pages
-		$posts = getPosts($conn, $board['urlid']);
-		foreach($posts as $post) {
-			createReplyPage($conn, $board['urlid'], $post['id']);
-			$completedtext .= " - " . $post['id'] . " reply page created<br>";
-		}
-	}
-	completed($completedtext);
-}
 
-if(!$config['installed']) {
-	die("<br><a href=\"?install\">Install now</a>");
-}
+$boards = getBoards($conn);
 
-die(getPage("manage.html", array("boards" => $boards)));
+require "inc/managepages.php";
+
+die(getPage("managepages/manage.html", array("boards" => $boards)));
 
 ?>

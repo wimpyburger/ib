@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Log In - {{ config.sitename }}</title>
+		<link rel="stylesheet" href="{{ config.siteurl }}/{{ config.defaultcss }}">
+		<meta charset="utf-8">
+    </head>
+    <body>
+        <h1>{{ config.sitename }}</h1>
+		<div class="errorbox">
+			<h2>LOG IN</h2>
+			<form action="" method="post">
+				Username: <input type="text" name="loginusername"><br>
+				Password: <input type="password" name="loginpassword"><br>
+				<input type="submit" value="Login">
+			</form>
+		</div>
+	</body>
+</html>

@@ -45,6 +45,10 @@ if(strlen($text) < $config['minmessagechars'] || strlen($text) > $config['maxmes
 	error("Message field length needs to be between " . $config['minmessagechars'] . " and " . $config['maxmessagechars'] . " characters");
 }
 
+if($name == "") {
+	$name = $config['defaultpostername'];
+}
+
 // all checks passed
 // submit
 $stmt = $conn->prepare("INSERT INTO posts_$board (name, subject, message, parent, ip, lastreply) VALUES (:name, :subject, :message, :parent, :ip, :lastreply)");
