@@ -6,6 +6,9 @@
 		<meta charset="utf-8">
     </head>
     <body>
+		{% if managing == true %}
+			<div class="notif"><a href="manage.php">Return to manage panel</a></div>
+		{% endif %}
         <h1>{{ board.urlid }} - {{ board.title }}</h1>
 		<form action="{{ config.siteurl }}/inc/post.php?board={{ board.urlid }}&parent=0" method="post">
 			Name: <input type="text" name="namefield"><br>
@@ -17,7 +20,15 @@
 		{% for thread in threads %}
 			<div class="thread">
 				<b>{{ thread.subject }}</b> <i>{{ thread.name }}</i>
-				<small>{{ thread.date|date("d/m/y m:i:s") }}</small> No.{{ thread.id }}  - [<a href="res/{{ thread.id }}.html">Reply</a>]
+				<small>{{ thread.date|date("d/m/y m:i:s") }}</small> No.{{ thread.id }}  - 
+				{% if managing == true %}
+					[<a href="?viewboard&board={{ board.urlid }}&thread={{ thread.id }}">Reply</a>]
+				{% else %}
+					[<a href="res/{{ thread.id }}.html">Reply</a>]
+				{% endif %}
+				{% if managing == true %}
+					<br>Manage: [<a href="{{ config.siteurl }}/manage.php?deletepost&board={{ board.urlid }}&id={{ thread.id }}">Delete Post</a>]
+				{% endif %}
 				<div id="message">{{ thread.message|raw|nl2br }}</div>
 			</div>
 		{% endfor %}

@@ -18,7 +18,7 @@ function createBoardIndex($conn, $urlid) {
 	// create file
 	$path = $config['rootdir'] . "/$urlid/index.html";
 	$index = fopen($path, "w");
-	$html = getPage("boardpage.html", array("board"=>$boardinfo, "threads"=>$threads));
+	$html = getPage("boardpage.html", array("board"=>$boardinfo, "threads"=>$threads, "managing"=>false));
 	fwrite($index, $html);
 }
 
@@ -29,7 +29,13 @@ function createReplyPage($conn, $urlid, $id) {
 	$post = getPost($conn, $urlid, $id); // get original post
 	$path = $config['rootdir'] . "/$urlid/res/$id.html";
 	$index = fopen($path, "w");
-	$html = getPage("boardreply.html", array("board"=>$boardinfo, "replies"=>$replies, "threadid"=>$id, "post"=>$post));
+	$html = getPage("boardreply.html", array (
+		"board"=>$boardinfo,
+		"replies"=>$replies,
+		"threadid"=>$id,
+		"post"=>$post,
+		"managing"=>false
+	));
 	fwrite($index, $html);
 }
 
@@ -37,7 +43,7 @@ function getManageBoardIndex($conn, $urlid) {
 	global $config;
 	$boardinfo = getBoardInfo($conn, $urlid);
 	$threads = getPosts($conn, $urlid);
-	return getPage("managepages/boardpage.html", array("board"=>$boardinfo, "threads"=>$threads));
+	return getPage("boardpage.html", array("board"=>$boardinfo, "threads"=>$threads, "managing"=>true));
 }
 
 function getManageBoardReply($conn, $urlid, $id) {
@@ -45,7 +51,13 @@ function getManageBoardReply($conn, $urlid, $id) {
 	$boardinfo = getBoardInfo($conn, $urlid);
 	$replies = getReplies($conn, $urlid, $id);
 	$post = getPost($conn, $urlid, $id); // get original post
-	return getPage("managepages/boardreply.html", array("board"=>$boardinfo, "replies"=>$replies, "threadid"=>$id, "post"=>$post));
+	return getPage("boardreply.html", array (
+		"board"=>$boardinfo,
+		"replies"=>$replies,
+		"threadid"=>$id,
+		"post"=>$post,
+		"managing"=>true
+	));
 }
 
 ?>

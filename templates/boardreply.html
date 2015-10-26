@@ -6,6 +6,9 @@
 		<meta charset="utf-8">
     </head>
     <body>
+		{% if managing == true %}
+			<div class="notif"><a href="manage.php">Return to manage panel</a></div>
+		{% endif %}
         <h1>{{ board.urlid }} - {{ board.title }}</h1>
 		<form action="{{ config.siteurl }}/inc/post.php?board={{ board.urlid }}&parent={{ threadid }}" method="post">
 			Name: <input type="text" name="namefield"><br>
@@ -13,17 +16,27 @@
 			<input type="submit" value="Post">
 		</form>
 		<hr>
-		<div class="notif">REPLYING TO POST {{ post.id }} - <a href="{{ config.siteurl }}/{{ board.urlid }}">Return</a></div>
+		{% if managing == true %}
+			<div class="notif">REPLYING TO POST {{ post.id }} - <a href="?viewboard&board={{ board.urlid }}">Return</a></div>
+		{% else %}
+			<div class="notif">REPLYING TO POST {{ post.id }} - <a href="{{ config.siteurl }}/{{ board.urlid }}">Return</a></div>
+		{% endif %}
 		<hr>
 		<div class="thread">
 			<b>{{ post.subject }}</b> <i>{{ post.name }}</i>
 			<small>{{ post.date|date("d/m/y m:i:s") }}</small> No.{{ post.id }}<br>
+			{% if managing == true %}
+				Manage: [<a href="{{ config.siteurl }}/manage.php?deletepost&board={{ board.urlid }}&id={{ thread.id }}">Delete Post</a>]
+			{% endif %}
 			<div id="message">{{ post.message|raw|nl2br }}</div>
 		</div>
 		{% for reply in replies %}
 			<div class="reply">
 				<i>{{ reply.name }}</i>
 				<small>{{ reply.date|date("d/m/y m:i:s") }}</small> No.{{ reply.id }}<br>
+				{% if managing == true %}
+					Manage: [<a href="{{ config.siteurl }}/manage.php?deletepost&board={{ board.urlid }}&id={{ reply.id }}">Delete Post</a>]
+				{% endif %}
 				<div id="message">{{ reply.message|raw|nl2br }}</div>
 			</div>
 		{% endfor %}

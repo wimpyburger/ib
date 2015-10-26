@@ -5,7 +5,8 @@ require "inc/templates.php";
 require "inc/functions.php";
 require "inc/generatepages.php";
 
-session_set_cookie_params('time()+600', '/', $_SERVER['SERVER_NAME'], false, true);
+session_name("manage-login");
+session_set_cookie_params(1200, $_SERVER['SERVER_NAME']); // 1200 seconds = 20 mins
 session_regenerate_id(true);
 session_start();
 
