@@ -12,7 +12,7 @@ if(isset($_GET['configure'])) {
 		recreateConfig();
 		completed("Config updated");
 	}
-	die(getPage("managepages/configure.html", array("config" => $config)));
+	die(getPage("managepages/configure.html", array()));
 }
 
 if(isset($_GET['deletepost'])) {
@@ -41,7 +41,12 @@ if(isset($_GET['createboard'])) {
 		createBoard($conn, $_POST['title'], $_POST['urlid']);
 		completed("Board created");
 	}
-	die(getPage("managepages/createboard.html", array("config" => $config)));
+	die(getPage("managepages/createboard.html", array()));
+}
+
+if(isset($_GET['manageaccounts'])) {
+	$users = getUsers($conn);
+	die(getPage("managepages/manageaccounts.html", array("users"=>$users,"username"=>$_SESSION['username'])));
 }
 
 if(isset($_GET['refreshstatic'])) {
@@ -86,6 +91,33 @@ if(isset($_GET['createaccount'])) {
 		completed("User account created");
 	}
 	die(getPage("managepages/createaccount.html", array()));
+}
+
+if(isset($_GET['deleteaccount'])) {
+	if(!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+		error("Invalid account");
+	}
+	$stmt = $conn->prepare("DELETE FROM users WHERE id = :id");
+	$stmt->bindParam(':id', $_GET['id'], PDO::PARAM_INT);
+	$stmt->execute();
+	completed("User account deleted");
+}
+
+if(isset($_GET['deleteboard'])) {
+	if(!isset($_GET['board']) || !boardExists($conn, $_GET['board'])) {
+		error("Board doesn't exist");
+	}
+	$completedtext = "";
+	$stmt = $conn->prepare("DELETE FROM boards WHERE urlid = :urlid");
+	$stmt->bindParam(':urlid', $_GET['board'], PDO::PARAM_STR);
+	$stmt->execute();
+	$completedtext .= "Deleted from 'boards' table<br>";
+	$stmt = $conn->prepare("DROP TABLE posts_" . $_GET['board']);
+	$stmt->execute();
+	$completedtext .= "Dropped posts table<br>";
+	rmdir($config['rootdir'] . "/" . $_GET['board']);
+	$completedtext .= "Deleted board directory<br>";
+	completed($completedtext);
 }
 
 ?>

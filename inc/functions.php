@@ -61,7 +61,7 @@ function createBoard($conn, $title, $urlid) {
 		date DATETIME NOT NULL DEFAULT NOW(),
 		ip VARCHAR(60) NOT NULL,
 		lastreply INT(50) NOT NULL,
-		filesum BINARY(16),
+		filesum BINARY(20),
 		filename VARCHAR(255)
 	) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 	try {
@@ -74,6 +74,9 @@ function createBoard($conn, $title, $urlid) {
 	
 	mkdir($config['rootdir'] . "/" . $urlid);
 	mkdir($config['rootdir'] . "/" . $urlid . "/res");
+	mkdir($config['rootdir'] . "/" . $urlid . "/src", 0755, true);
+	mkdir($config['rootdir'] . "/" . $urlid . "/thumb", 0755, true);
+	
 	createBoardIndex($conn, $urlid);
 	createSiteIndex($conn);
 	
@@ -95,6 +98,55 @@ function getBoards($conn) {
 		return false;
 	}
 	return $boards;
+}
+
+function getUsers($conn) {
+	try {
+		$usersquery = $conn->query("SELECT id, username FROM users");
+		$usersquery->execute();
+		$users = $usersquery->fetchAll(PDO::FETCH_ASSOC);
+	} catch(PDOException $ex) {
+		echo "Couldn't retrieve user list";
+		return false;
+	}
+	return $users;
+}
+
+function fileExists($conn, $urlid, $hash) {
+	$stmt = $conn->prepare("SELECT 1 FROM posts_$urlid WHERE filesum = UNHEX(:filesum)");
+	$stmt->bindParam(':filesum', $hash, PDO::PARAM_STR);
+	$stmt->execute();
+	if($stmt->fetch()) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function createThumbnail($extension, $path, $destination, $width, $height, $oldwidth, $oldheight) {
+	if($extension == "jpg") {
+		$img = imagecreatefromjpeg($path);
+		$newimg = imagecreatetruecolor($width, $height);
+		imagecopyresampled($newimg, $img, 0, 0, 0, 0, $width, $height, $oldwidth, $oldheight);
+		imagejpeg($newimg, $destination, 100);
+		return true;
+	}
+	if($extension == "png") {
+		$img = imagecreatefrompng($path);
+		$newimg = imagecreatetruecolor($width, $height);
+		imagecopyresampled($newimg, $img, 0, 0, 0, 0, $width, $height, $oldwidth, $oldheight);
+		imagepng($newimg, $destination);
+		return true;
+	}
+	if($extension == "gif") {
+		$img = imagecreatefromgif($path);
+		$newimg = imagecreatetruecolor($width, $height);
+		imagegif($newimg, $destination);
+		imagecopyresampled($newimg, $img, 0, 0, 0, 0, $width, $height, $oldwidth, $oldheight);
+		
+		return true;
+	}
+	return false;
 }
 
 function recreateConfig() {

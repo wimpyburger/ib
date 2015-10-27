@@ -33,6 +33,9 @@ if(!$config['installed']) {
 }
 
 if(isset($_GET['install'])) {
+	if($config['installed'] !== 0 && !isset($_SESSION['username'])) {
+		error("Site already installed - Otherwise, change 'installed' value in config to 0");
+	}
 	installSite($conn);
 }
 

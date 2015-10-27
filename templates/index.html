@@ -8,7 +8,7 @@
         <h1>{{ config.sitename }}</h1>
 		<ul>
 			{% for board in boards %}
-			<li><a href="{{ config.rooturl }}/{{ board.urlid }}">{{ board.urlid }}</a> - {{ board.title }}</li>
+			<li><a href="{{ config.siteurl }}/{{ board.urlid }}">{{ board.urlid }}</a> - {{ board.title }}</li>
 			{% endfor %}
 		</ul>
 	</body>

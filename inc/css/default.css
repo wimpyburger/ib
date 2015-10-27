@@ -1,6 +1,6 @@
 body {
 	font-family:sans-serif;
-	background: #EEE;
+	background:#EEE;
 	color:#444;
 	width:90%;
 	margin:auto;
@@ -29,7 +29,29 @@ fieldset {
 
 .notif {
 	border-radius:4px;
-	background: #FEE;
-	padding: 4px;
-	border: 1px solid #DDD;
+	background:#FEE;
+	padding:4px;
+	border:1px solid #DDD;
+}
+
+table {
+    border-collapse:collapse;
+}
+
+table td, table th {
+	padding:5px;
+    border:1px solid black;
+}
+
+fieldset {
+	border:1px solid #444;
+}
+
+a {
+	color:#00A;
+	text-decoration:none;
+}
+
+a:hover {
+	text-decoration:underline;
 }

@@ -10,9 +10,10 @@
 			<div class="notif"><a href="manage.php">Return to manage panel</a></div>
 		{% endif %}
         <h1>{{ board.urlid }} - {{ board.title }}</h1>
-		<form action="{{ config.siteurl }}/inc/post.php?board={{ board.urlid }}&parent={{ threadid }}" method="post">
+		<form action="{{ config.siteurl }}/inc/post.php?board={{ board.urlid }}&parent={{ threadid }}" method="post" enctype="multipart/form-data">
 			Name: <input type="text" name="namefield"><br>
 			Message: <textarea name="textfield"></textarea><br>
+			Image: <input name="imagefield" type="file"><br>
 			<input type="submit" value="Post">
 		</form>
 		<hr>

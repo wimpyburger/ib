@@ -36,10 +36,14 @@ if(!isset($_POST['namefield']) || !isset($_POST['textfield'])) {
 $parent = $_GET['parent'];
 $board = $_GET['board'];
 $name = htmlentities($_POST['namefield'], ENT_QUOTES, "utf-8");
-$subject = htmlentities($_POST['subjectfield'], ENT_QUOTES, "utf-8");
+if($parent == 0) {
+	$subject = htmlentities($_POST['subjectfield'], ENT_QUOTES, "utf-8");
+}
 $text = htmlentities($_POST['textfield'], ENT_QUOTES, "utf-8");
+$uploadedimage = $_FILES['imagefield'];
 $ip = $_SERVER['REMOTE_ADDR'];
 $lastreply = 0;
+$fileupload = false;
 
 if(strlen($text) < $config['minmessagechars'] || strlen($text) > $config['maxmessagechars']) {
 	error("Message field length needs to be between " . $config['minmessagechars'] . " and " . $config['maxmessagechars'] . " characters");
@@ -49,15 +53,55 @@ if($name == "") {
 	$name = $config['defaultpostername'];
 }
 
+if($uploadedimage['tmp_name'] != "") {
+	// temp file exists
+	$imageinfo = getimagesize($uploadedimage['tmp_name']);
+	$filesize = filesize($uploadedimage['tmp_name']);
+	$extension = false;
+	if($imageinfo[2] == 2) {
+		$extension = "jpg";
+	}
+	if($imageinfo[2] == 3) {
+		$extension = "png";
+	}
+	if($imageinfo[2] == 1) {
+		$extension = "gif";
+	}
+	if(!$extension) {
+		error("Invalid file type");
+	}
+	if($filesize > $config['maximagesize']) {
+		error("Image exceeds maximum size");
+	}
+	$filename = uniqid() . ".$extension";
+	$filesum = sha1_file($uploadedimage['tmp_name']);
+	if(fileExists($conn, $board, $filesum)) {
+		error("File already exists");
+	}
+	createThumbnail($extension, $uploadedimage['tmp_name'], $config['rootdir'] . "/$board/thumb/$filename", 100, 100, $imageinfo[0], $imageinfo[1]);
+	if(!move_uploaded_file($uploadedimage['tmp_name'], $config['rootdir'] . "/$board/src/$filename")) {
+		error("Upload failed");
+	}
+	$fileupload = true;
+}
+
 // all checks passed
 // submit
-$stmt = $conn->prepare("INSERT INTO posts_$board (name, subject, message, parent, ip, lastreply) VALUES (:name, :subject, :message, :parent, :ip, :lastreply)");
+if($fileupload) {
+	$stmt = $conn->prepare("INSERT INTO posts_$board (name, subject, message, parent, ip, lastreply, filesum, filename) VALUES (:name, :subject, :message, :parent, :ip, :lastreply, UNHEX(:filesum), :filename)");
+} else {
+	$stmt = $conn->prepare("INSERT INTO posts_$board (name, subject, message, parent, ip, lastreply) VALUES (:name, :subject, :message, :parent, :ip, :lastreply)");
+}
 $stmt->bindParam(':name', $name, PDO::PARAM_STR);
 $stmt->bindParam(':subject', $subject, PDO::PARAM_STR);
 $stmt->bindParam(':message', $text, PDO::PARAM_STR);
 $stmt->bindParam(':parent', $parent, PDO::PARAM_STR);
 $stmt->bindParam(':ip', $ip, PDO::PARAM_STR);
 $stmt->bindParam(':lastreply', $lastreply, PDO::PARAM_INT);
+if($fileupload) {
+	$stmt->bindParam(':filesum', $filesum, PDO::PARAM_STR);
+	$stmt->bindParam(':filename', $filename, PDO::PARAM_STR);
+}
 try {
 	$stmt->execute();
 } catch(PDOException $ex) {
