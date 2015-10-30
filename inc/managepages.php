@@ -20,7 +20,7 @@ if(isset($_GET['deletepost'])) {
 		error("Board doesn't exist");
 	}
 	deletePost($conn, $_GET['board'], $_GET['id']);
-	completed("Post deleted");
+	header("Location: " . $config['siteurl'] . "/manage.php?viewboard&board=" . $_GET['board']);
 }
 
 if(isset($_GET['viewboard'])) {
@@ -107,17 +107,57 @@ if(isset($_GET['deleteboard'])) {
 	if(!isset($_GET['board']) || !boardExists($conn, $_GET['board'])) {
 		error("Board doesn't exist");
 	}
-	$completedtext = "";
-	$stmt = $conn->prepare("DELETE FROM boards WHERE urlid = :urlid");
-	$stmt->bindParam(':urlid', $_GET['board'], PDO::PARAM_STR);
+	deleteBoard($conn, $_GET['board']);
+}
+
+if(isset($_GET['banposter'])) {
+	if($_GET['banposter'] == 1) {
+		if(!is_numeric($_POST['length']) || $_POST['length'] <= 0) {
+			error("Invalid ban length");
+		}
+		if(!filter_var($_POST['ip'], FILTER_VALIDATE_IP)) {
+			error("Invalid ip address");
+		}
+		$_POST['reason'] = htmlentities($_POST['reason']);
+		// submit ban
+		$stmt = $conn->prepare("INSERT INTO bans (ip, reason, expires) VALUES (:ip, :reason, DATE_ADD(NOW(), INTERVAL :length HOUR))");
+		$stmt->bindParam(':ip', $_POST['ip'], PDO::PARAM_STR);
+		$stmt->bindParam(':reason', $_POST['reason'], PDO::PARAM_STR);
+		$stmt->bindParam(':length', $_POST['length'], PDO::PARAM_STR);
+		try {
+			$stmt->execute();
+		} catch(PDOException $ex) {
+			error("Couldn't create board: " . $ex);
+		}
+		completed("Banned");
+	}
+	// check if previous bans exist
+	$previousbans = false;
+	$ip = "";
+	if(isset($_GET['ip'])) {
+		if(getBan($conn, $_GET['ip'])) {
+			$previousbans = true;
+		}
+		$ip = $_GET['ip'];
+	}
+	die(getPage("managepages/banposter.html", array("previousbans"=>$previousbans,"ip"=>$ip)));
+}
+
+if(isset($_GET['managebans'])) {
+	// get all current bans
+	$ip = NULL;
+	if(isset($_GET['ip'])) {
+		if(!filter_var($_GET['ip'], FILTER_VALIDATE_IP)) {
+			error("Invalid ip address");
+		}
+		$stmt = $conn->prepare("SELECT * FROM bans WHERE ip = :ip");
+		$stmt->bindParam(":ip", $_GET['ip'], PDO::PARAM_STR);
+		$ip = $_GET['ip'];
+	}
+	$stmt = $conn->prepare("SELECT * FROM bans WHERE expires > NOW()");
 	$stmt->execute();
-	$completedtext .= "Deleted from 'boards' table<br>";
-	$stmt = $conn->prepare("DROP TABLE posts_" . $_GET['board']);
-	$stmt->execute();
-	$completedtext .= "Dropped posts table<br>";
-	rmdir($config['rootdir'] . "/" . $_GET['board']);
-	$completedtext .= "Deleted board directory<br>";
-	completed($completedtext);
+	$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	die(getPage("managepages/managebans.html", array("bans"=>$result, "ip"=>$ip)));
 }
 
 ?>

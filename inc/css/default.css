@@ -15,16 +15,23 @@ fieldset {
 	background:#FFF;
 	padding:10px;
 	border-bottom:1px solid #BBB;
+	overflow: hidden;
 }
 
 .reply {
 	background:#E5E5E5;
 	padding:10px;
 	border-bottom:1px solid #FFF;
+	overflow: hidden;
+}
+
+#image {
+	float:left;
 }
 
 #message {
 	margin-left:15px;
+	display:inline-block;
 }
 
 .notif {

@@ -21,14 +21,18 @@
 		{% for thread in threads %}
 			<div class="thread">
 				<b>{{ thread.subject }}</b> <i>{{ thread.name }}</i>
-				<small>{{ thread.date|date("d/m/y m:i:s") }}</small> No.{{ thread.id }}  - 
+				<small>{{ thread.date|date("d/m/y H:i:s") }}</small> No.{{ thread.id }}  - 
 				{% if managing == true %}
 					[<a href="?viewboard&board={{ board.urlid }}&thread={{ thread.id }}">Reply</a>]
 				{% else %}
 					[<a href="res/{{ thread.id }}.html">Reply</a>]
 				{% endif %}
 				{% if managing == true %}
-					<br>Manage: [<a href="{{ config.siteurl }}/manage.php?deletepost&board={{ board.urlid }}&id={{ thread.id }}">Delete Post</a>]
+					<br>[<a href="{{ config.siteurl }}/manage.php?deletepost&board={{ board.urlid }}&id={{ thread.id }}">Delete</a>] [<a href="{{ config.siteurl }}/manage.php?banposter&ip={{ thread.ip }}">Ban</a>]
+				{% endif %}
+				<br>
+				{% if thread.filename is not null %}
+					<a href="{{ config.siteurl }}/{{ board.urlid }}/src/{{ thread.filename }}"><img src="{{ config.siteurl }}/{{ board.urlid }}/thumb/{{ thread.filename }}" id="image"></a>
 				{% endif %}
 				<div id="message">{{ thread.message|raw|nl2br }}</div>
 			</div>

@@ -25,18 +25,26 @@
 		<hr>
 		<div class="thread">
 			<b>{{ post.subject }}</b> <i>{{ post.name }}</i>
-			<small>{{ post.date|date("d/m/y m:i:s") }}</small> No.{{ post.id }}<br>
+			<small>{{ post.date|date("d/m/y H:i:s") }}</small> No.{{ post.id }}
 			{% if managing == true %}
-				Manage: [<a href="{{ config.siteurl }}/manage.php?deletepost&board={{ board.urlid }}&id={{ thread.id }}">Delete Post</a>]
+				<br>[<a href="{{ config.siteurl }}/manage.php?deletepost&board={{ board.urlid }}&id={{ thread.id }}">Delete</a>] [<a href="{{ config.siteurl }}/manage.php?banposter&ip={{ thread.ip }}">Ban</a>]
+			{% endif %}
+			<br>
+			{% if thread.filename is not null %}
+				<a href="{{ config.siteurl }}/{{ board.urlid }}/src/{{ thread.filename }}"><img src="{{ config.siteurl }}/{{ board.urlid }}/thumb/{{ thread.filename }}" id="image"></a>
 			{% endif %}
 			<div id="message">{{ post.message|raw|nl2br }}</div>
 		</div>
 		{% for reply in replies %}
 			<div class="reply">
 				<i>{{ reply.name }}</i>
-				<small>{{ reply.date|date("d/m/y m:i:s") }}</small> No.{{ reply.id }}<br>
+				<small>{{ reply.date|date("d/m/y H:i:s") }}</small> No.{{ reply.id }}
 				{% if managing == true %}
-					Manage: [<a href="{{ config.siteurl }}/manage.php?deletepost&board={{ board.urlid }}&id={{ reply.id }}">Delete Post</a>]
+					<br>[<a href="{{ config.siteurl }}/manage.php?deletepost&board={{ board.urlid }}&id={{ reply.id }}">Delete</a>] [<a href="{{ config.siteurl }}/manage.php?banposter&ip={{ thread.ip }}">Ban</a>]
+				{% endif %}
+				<br>
+				{% if reply.filename is not null %}
+					<a href="{{ config.siteurl }}/{{ board.urlid }}/src/{{ reply.filename }}"><img src="{{ config.siteurl }}/{{ board.urlid }}/thumb/{{ reply.filename }}" id="image"></a>
 				{% endif %}
 				<div id="message">{{ reply.message|raw|nl2br }}</div>
 			</div>

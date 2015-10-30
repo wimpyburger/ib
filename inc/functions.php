@@ -16,7 +16,7 @@ function installSite($conn) {
 		error("Couldn't create tables: " . $ex);
 	}
 	$username = "admin";
-	$password = '$2y$10$TAolHkHcItf5v7ZpWKsYPut6pmWNemNBpgkgEw8rqIY.9BATJeenG';
+	$password = '$2y$10$TAolHkHcItf5v7ZpWKsYPut6pmWNemNBpgkgEw8rqIY.9BATJeenG'; // 'test' encoded
 	
 	// create admin account with username 'admin' and password 'test'
 	$stmt = $conn->prepare("INSERT INTO users (username, password) VALUES (:username, :password)"); // get threads
@@ -28,6 +28,22 @@ function installSite($conn) {
 	recreateConfig();
 	
 	completed("Script installed. Login to the admin panel with username <b>admin</b> and password <b>test</b>");
+}
+
+function getBan($conn, $ip) {
+	$stmt = $conn->prepare("SELECT * FROM bans WHERE ip = :ip AND expires > NOW()");
+	$stmt->bindParam(':ip', $ip);
+	$stmt->execute();
+	$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	if(!$result) {
+		return false;
+	} else {
+		return $result;
+	}
+}
+
+function banned($info) {
+	die(getPage("banned.html", array("info"=>$info[0])));
 }
 
 function createBoard($conn, $title, $urlid) {
@@ -86,6 +102,40 @@ function createBoard($conn, $title, $urlid) {
 	if (fwrite($configfile, $configcontents) === 0) {
         error("Couldn't create config file");
     }
+}
+
+function deleteDir($dir) {
+	if(!file_exists($dir)) {
+		return true;
+	}
+	if(!is_dir($dir)) {
+		return unlink($dir);
+	}
+	foreach(scandir($dir) as $item) {
+		if ($item == '.' || $item == '..') {
+			continue;
+		}
+		if(!deleteDir($dir . DIRECTORY_SEPARATOR . $item)) {
+			return false;
+		}
+	}
+	return rmdir($dir);
+}
+
+function deleteBoard($conn, $urlid) {
+	global $config;
+	$completedtext = "";
+	$stmt = $conn->prepare("DELETE FROM boards WHERE urlid = :urlid");
+	$stmt->bindParam(':urlid', $urlid, PDO::PARAM_STR);
+	$stmt->execute();
+	$completedtext .= "Deleted from 'boards' table<br>";
+	$stmt = $conn->prepare("DROP TABLE posts_" . $urlid);
+	$stmt->execute();
+	$completedtext .= "Dropped posts table<br>";
+	// Delete files
+	deleteDir($config['rootdir'] . "/" . $urlid);
+	$completedtext .= "Deleted board directory<br>";
+	completed($completedtext);
 }
 
 function getBoards($conn) {
@@ -240,7 +290,7 @@ function deletePost($conn, $urlid, $postid) {
 	global $config;
 	// check if its a thread
 	// thread - delete post, replies and reply page
-	$stmt = $conn->prepare("SELECT parent FROM posts_$urlid WHERE id = :postid");
+	$stmt = $conn->prepare("SELECT parent, filename FROM posts_$urlid WHERE id = :postid");
 	$stmt->bindParam(":postid", $postid, PDO::PARAM_INT);
 	$stmt->execute();
 	$result = $stmt->fetch();
@@ -259,6 +309,12 @@ function deletePost($conn, $urlid, $postid) {
 	} else {
 		// remake parent thread
 		createReplyPage($conn, $urlid, $result['parent']);
+	}
+	// if it had an image
+	if(!is_null($result['filename'])) {
+		// delete files
+		unlink($config['rootdir'] . "/" . $urlid . "/src/" . $result['filename']);
+		unlink($config['rootdir'] . "/" . $urlid . "/thumb/" . $result['filename']);
 	}
 	// remake index page
 	createBoardIndex($conn, $urlid);

@@ -53,6 +53,11 @@ if($name == "") {
 	$name = $config['defaultpostername'];
 }
 
+// check ban
+if($result = getBan($conn, $ip)) {
+	banned($result);
+}
+
 if($uploadedimage['tmp_name'] != "") {
 	// temp file exists
 	$imageinfo = getimagesize($uploadedimage['tmp_name']);
