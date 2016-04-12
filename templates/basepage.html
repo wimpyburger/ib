@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+		{% block head %}
+		{% endblock %}
+		<link rel="stylesheet" href="{{ config.siteurl }}/inc/css/{{ config.defaultcss }}.css" id="pagestyle">
+		<meta charset="utf-8">
+		<script>var board = "{{ board.urlid }}"; var siteurl = "{{ config.siteurl }}";</script>
+		<script src="{{ config.siteurl }}/inc/js/general.js"></script>
+    </head>
+    <body>
+		<select id="styleswitch">
+			{% for style in config.stylesheets %}
+				{% if style == config.defaultcss %}
+					<option value="{{ style }}" selected>{{ style }}</option>
+				{% else %}
+					<option value="{{ style }}">{{ style }}</option>
+				{% endif %}
+			{% endfor %}
+		</select>
+		{% block content %}
+		{% endblock %}
+		<div class="footer">
+			{{ config.sitename }} 2016
+		</div>
+	</body>
+</html>

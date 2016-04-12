@@ -28,10 +28,6 @@ if(isset($_POST['loginusername']) && isset($_POST['loginpassword'])) {
 	}
 }
 
-if(!$config['installed']) {
-	echo "Board not installed.<br><a href=\"?install\">Install now</a><br>Otherwise, change 'installed' value in config to 1";
-}
-
 if(isset($_GET['install'])) {
 	if($config['installed'] !== 0 && !isset($_SESSION['username'])) {
 		error("Site already installed - Otherwise, change 'installed' value in config to 0");
@@ -39,11 +35,14 @@ if(isset($_GET['install'])) {
 	installSite($conn);
 }
 
+if(!$config['installed']) {
+	echo "<br>Board doesn't seem to be installed. <a href=\"?install\">Install now</a>. Otherwise, change 'installed' value in config to 1";
+}
+
 // very basic login stuff
 if(!isset($_SESSION['username'])) {
 	die(getPage("managepages/login.html", array()));
 }
-
 
 $boards = getBoards($conn);
 

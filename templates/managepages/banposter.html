@@ -1,30 +1,31 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>{{ config.sitename }}</title>
-		<link rel="stylesheet" href="{{ config.siteurl }}/{{ config.defaultcss }}">
-		<script src="{{ config.siteurl }}/inc/js/manage.js"></script>
-		<meta charset="utf-8">
-    </head>
-    <body>
-		<h1>{{ config.sitename }} - <a href="manage.php">Manage</a></h1>
-		<fieldset>
-			<legend>Ban Poster</legend>
-				{% if previousbans %}
-					<a href="?managebans&ip={{ ip }}">Previous bans</a> detected<br>
-				{% endif %}
-				<form action="?banposter=1" method="post">
-					IP: <input type="text" name="ip" value="{{ ip }}"><br>
-					Reason: <input type="text" name="reason" value="{{ value }}"><br>
-					Length: <input type="text" name="length" id="length"> hours<br>
-					<button onclick="changeValue('length', '24')" type="button">1 day</button>
-					<button onclick="changeValue('length', '48')" type="button">2 days</button>
-					<button onclick="changeValue('length', '72')" type="button">3 days</button>
-					<button onclick="changeValue('length', '168')" type="button">1 week</button>
-					<button onclick="changeValue('length', '730')" type="button">1 month</button>
-					<button onclick="changeValue('length', '8760')" type="button">1 year</button><br>
-					<input type="submit" value="Ban">
-				</form>
-		</fieldset>
-	</body>
-</html>
+{% extends "basepage.html" %}
+
+{% block head %}
+	<title>{{ config.sitename }}</title>
+	<script src="{{ config.siteurl }}/inc/js/manage.js"></script>
+{% endblock %}
+
+{% block content %}
+	<h1>{{ config.sitename }} - <a href="manage.php">Manage</a></h1>
+	<fieldset>
+		<legend>Ban Poster</legend>
+			{% if previousbans %}
+				<a href="?managebans&ip={{ ip }}">Previous bans</a> detected<br>
+			{% endif %}
+			<form action="?banposter=1" method="post">
+				<label for="ip">IP</label> 
+				<input type="text" name="ip" value="{{ ip }}" id="ip"><br>
+				<label for="reason">Reason</label>
+				<input type="text" name="reason" value="{{ value }}" id="reason"><br>
+				<label for="length">Length (hrs)</label>
+				<input type="text" name="length" id="length"><br>
+				<button onclick="changeValue('length', '24')" type="button">1 day</button>
+				<button onclick="changeValue('length', '48')" type="button">2 days</button>
+				<button onclick="changeValue('length', '72')" type="button">3 days</button>
+				<button onclick="changeValue('length', '168')" type="button">1 week</button>
+				<button onclick="changeValue('length', '730')" type="button">1 month</button>
+				<button onclick="changeValue('length', '8760')" type="button">1 year</button><br>
+				<input type="submit" value="Ban">
+			</form>
+	</fieldset>
+{% endblock %}

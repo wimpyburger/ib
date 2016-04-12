@@ -191,9 +191,8 @@ function createThumbnail($extension, $path, $destination, $width, $height, $oldw
 	if($extension == "gif") {
 		$img = imagecreatefromgif($path);
 		$newimg = imagecreatetruecolor($width, $height);
-		imagegif($newimg, $destination);
 		imagecopyresampled($newimg, $img, 0, 0, 0, 0, $width, $height, $oldwidth, $oldheight);
-		
+		imagegif($newimg, $destination);
 		return true;
 	}
 	return false;
@@ -205,7 +204,7 @@ function recreateConfig() {
 	foreach($config as $key=>$value) {
 		if($key == 'rootdir') {
 			$configcontents .= '$config[\'rootdir\'] = dirname(__FILE__) . "/../";' . "\n";
-		} else if(is_string($value)) {
+		} else if(!is_numeric($value)) {
 			$configcontents .= '$config[\'' . $key . '\'] = "' . $value . "\";\n";
 		} else {
 			$configcontents .= '$config[\'' . $key . '\'] = ' . $value . ";\n";
@@ -255,8 +254,31 @@ function getBoardInfo($conn, $urlid) {
 function getPosts($conn, $urlid) {
 	$stmt = $conn->prepare("SELECT * FROM posts_$urlid WHERE parent = '0' ORDER by lastreply DESC"); // get threads
 	$stmt->execute();
-	$result = $stmt->fetchAll();
-	return $result;
+	$results = $stmt->fetchAll();
+	// get num of replies
+	foreach($results as $key=>$value) {
+		$stmt = $conn->prepare("SELECT id FROM posts_$urlid WHERE parent = :id");
+		$stmt->bindParam(':id', $value['id'], PDO::PARAM_INT);
+		$stmt->execute();
+		$results[$key]['numReplies'] = $stmt->rowCount();
+		if($results[$key]['numReplies'] > 0) {
+			// num of image replies
+			$stmt = $conn->prepare("SELECT id FROM posts_$urlid WHERE parent = :id AND filename IS NOT NULL");
+			$stmt->bindParam(':id', $value['id'], PDO::PARAM_INT);
+			$stmt->execute();
+			$results[$key]['numImageReplies'] = $stmt->rowCount();
+		} else {
+			$results[$key]['numImageReplies'] = 0;
+		}
+	}
+	return $results;
+}
+
+function getAllPosts($conn, $urlid) {
+	$stmt = $conn->prepare("SELECT * FROM posts_$urlid ORDER by id"); // get threads
+	$stmt->execute();
+	$results = $stmt->fetchAll();
+	return $results;
 }
 
 function getPost($conn, $urlid, $postid) {
@@ -318,6 +340,55 @@ function deletePost($conn, $urlid, $postid) {
 	}
 	// remake index page
 	createBoardIndex($conn, $urlid);
+}
+
+function applyFilters($post, $board) {
+	global $config;
+	// make links work
+	preg_match_all("(http://\S+)", $post, $matches);
+	foreach($matches[0] as $match) {
+		$post = str_replace($match, "<a href=\"$match\">$match</a>", $post);
+	}
+	preg_match_all("(https://\S+)", $post, $matches);
+	foreach($matches[0] as $match) {
+		$post = str_replace($match, "<a href=\"$match\">$match</a>", $post);
+	}
+	// make post numbers work
+	preg_match_all("(&gt;&gt;\S+)", $post, $matches);
+	foreach($matches[0] as $match) {
+		$postnum = substr($match, strlen("&gt;&gt;"));
+		$post = str_replace($match, "<a href=\"{$config['siteurl']}/inc/findpost.php?id={$postnum}&board={$board}\" class=\"quotelink\">$match</a>", $post);
+	}
+	// remove consecutive new lines
+	$post = preg_replace("/[\r\n]+/", "\n", $post);
+	return $post;
+}
+
+function checkFlooding($conn, $ip, $board, $parent) {
+	global $config;
+	// get last post time
+	if($parent == 0) {
+		$stmt = $conn->prepare("SELECT date FROM posts_{$board} WHERE ip = :ip AND parent = 0 ORDER BY date DESC LIMIT 1"); // last thread
+	} else {
+		$stmt = $conn->prepare("SELECT date FROM posts_{$board} WHERE ip = :ip ORDER BY date DESC LIMIT 1"); // last post
+	}
+	$stmt->bindParam(":ip", $ip);
+	$stmt->execute();
+	$lastpost = strtotime($stmt->fetch()['date']);
+	$stmt = $conn->prepare("SELECT NOW()");
+	$stmt->execute();
+	$time = strtotime($stmt->fetch()[0]);
+	if($parent == 0) {
+		$nextpost = $lastpost + $config['threaddelay'];
+	} else {
+		$nextpost = $lastpost + $config['postdelay'];
+	}
+	if($time >= $nextpost) {
+		return true;
+	} else {
+		$postdelay = $nextpost - $time;
+		error("Please wait $postdelay seconds before posting");
+	}
 }
 
 ?>

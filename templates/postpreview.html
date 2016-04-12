@@ -1,0 +1,13 @@
+{% if post.parent == 0 %}
+<div class="thread">
+{% else %}
+<div class="reply">
+{% endif %}
+	<b>{{ post.subject }}</b> <i>{{ post.name }}</i>
+	<small>{{ post.date|date("d/m/y H:i:s") }}</small> No.{{ post.id }}
+	<br>
+	{% if post.filename is not null %}
+		<a href="{{ config.siteurl }}/{{ board }}/src/{{ post.filename }}" class="imagelink"><img src="{{ config.siteurl }}/{{ board }}/thumb/{{ post.filename }}" class="image"></a>
+	{% endif %}
+	<div class="message">{{ post.message|raw|nl2br }}</div>
+</div>

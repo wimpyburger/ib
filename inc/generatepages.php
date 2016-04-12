@@ -14,23 +14,26 @@ function createSiteIndex($conn) {
 function createBoardIndex($conn, $urlid) {
 	global $config;
 	$boardinfo = getBoardInfo($conn, $urlid);
+	$boards = getBoards($conn);
 	$threads = getPosts($conn, $urlid);
 	// create file
 	$path = $config['rootdir'] . "/$urlid/index.html";
 	$index = fopen($path, "w");
-	$html = getPage("boardpage.html", array("board"=>$boardinfo, "threads"=>$threads, "managing"=>false));
+	$html = getPage("boardpage.html", array("board"=>$boardinfo, "boards"=>$boards, "threads"=>$threads, "managing"=>false));
 	fwrite($index, $html);
 }
 
 function createReplyPage($conn, $urlid, $id) {
 	global $config;
 	$boardinfo = getBoardInfo($conn, $urlid);
+	$boards = getBoards($conn);
 	$replies = getReplies($conn, $urlid, $id);
 	$post = getPost($conn, $urlid, $id); // get original post
 	$path = $config['rootdir'] . "/$urlid/res/$id.html";
 	$index = fopen($path, "w");
 	$html = getPage("boardreply.html", array (
 		"board"=>$boardinfo,
+		"boards"=>$boards,
 		"replies"=>$replies,
 		"threadid"=>$id,
 		"post"=>$post,
@@ -39,11 +42,24 @@ function createReplyPage($conn, $urlid, $id) {
 	fwrite($index, $html);
 }
 
+function createCataloguePage($conn, $urlid) {
+	global $config;
+	$boardinfo = getBoardInfo($conn, $urlid);
+	$boards = getBoards($conn);
+	$threads = getPosts($conn, $urlid);
+	// create file
+	$path = $config['rootdir'] . "/$urlid/catalogue.html";
+	$index = fopen($path, "w");
+	$html = getPage("boardcatalogue.html", array("board"=>$boardinfo, "boards"=>$boards, "threads"=>$threads, "managing"=>false));
+	fwrite($index, $html);
+}
+
 function getManageBoardIndex($conn, $urlid) {
 	global $config;
 	$boardinfo = getBoardInfo($conn, $urlid);
+	$boards = getBoards($conn);
 	$threads = getPosts($conn, $urlid);
-	return getPage("boardpage.html", array("board"=>$boardinfo, "threads"=>$threads, "managing"=>true));
+	return getPage("boardpage.html", array("board"=>$boardinfo, "boards"=>$boards, "threads"=>$threads, "managing"=>true));
 }
 
 function getManageBoardReply($conn, $urlid, $id) {

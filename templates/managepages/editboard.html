@@ -7,12 +7,12 @@
 {% block content %}
 	<h1>{{ config.sitename }} - <a href="manage.php">Manage</a></h1>
 	<fieldset>
-		<legend>Create Board</legend>
+		<legend>Edit Board</legend>
 			<form action="?editboard" method="post">
 				<label for="title">Title</label>
 				<input type="text" name="title" value="{{ boardInfo.title }}" id="title"><br>
 				<label for="urlid">URL (eg <b>b</b>)</label>
-				<input type="text" name="urlid" value="{{ boardInfo.urlid }}" id="urlid"><br>
+				<input type="text" name="urlid" value="{{ boardInfo.urlid }}" id="urlid" readonly><br>
 				<input type="submit" value="Create">
 			</form>
 	</fieldset>

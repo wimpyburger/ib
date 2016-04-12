@@ -1,0 +1,33 @@
+{% extends "basepage.html" %}
+
+{% block head %}
+	<title>{{ config.sitename }}</title>
+{% endblock %}
+
+{% block content %}
+	<h1><a href="{{ config.siteurl }}">{{ config.sitename }}</a></h1>
+	<div class="box">
+		<h3>Stats</h3>
+		Total Posts: {{ stats.totalposts }}<br>
+		Unique Posters: {{ stats.uniqueposters }}
+	</div>
+	<div class="box">
+		<h3>Recent Images</h3>
+		{% for image in images %}
+			<a href="{{ config.siteurl }}/{{ image.board.urlid }}/res/{{ image.url }}.html">
+				<img src="{{ config.siteurl }}/{{ image.board.urlid }}/thumb/{{ image.filename }}">
+			</a>
+		{% endfor %}
+	</div>
+	<div class="box">
+	<h3>Recent Posts</h3>
+		<ul>
+			{% for post in posts %}
+			<li>
+				<a href="{{ config.siteurl }}/{{ post.board.urlid }}/" class="board">{{ post.board.title }}</a>
+				<a href="{{ config.siteurl }}/{{ post.board.urlid }}/res/{{ post.url }}.html">{{ post.message }}</a>
+			</li>
+			{% endfor %}
+		</ul>
+	</div>
+{% endblock %}

@@ -1,14 +1,13 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Error - {{ config.sitename }}</title>
-		<link rel="stylesheet" href="{{ config.siteurl }}/{{ config.defaultcss }}">
-    </head>
-    <body>
-        <h1>{{ config.sitename }}</h1>
+{% extends "basepage.html" %}
+
+{% block head %}
+	<title>Error - {{ config.sitename }}</title>
+{% endblock %}
+
+{% block content %}
+	 <h1>{{ config.sitename }}</h1>
 		<div class="errorbox">
 			<h2>ERROR</h2>
 			{{ errormsg }}
 		</div>
-	</body>
-</html>
+{% endblock %}

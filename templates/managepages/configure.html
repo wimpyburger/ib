@@ -1,20 +1,19 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>{{ config.sitename }}</title>
-		<link rel="stylesheet" href="{{ config.siteurl }}/{{ config.defaultcss }}">
-		<meta charset="utf-8">
-    </head>
-    <body>
-		<h1>{{ config.sitename }} - <a href="manage.php">Manage</a></h1>
-		<fieldset>
-			<legend>Configure Site</legend>
-				<form action="?configure" method="post">
-					{% for key, value in config %}
-					{{ key }}: <input type="text" name="{{ key }}" value="{{ value }}"><br>
-					{% endfor %}
-					<input type="submit" value="Update Config">
-				</form>
-		</fieldset>
-	</body>
-</html>
+{% extends "basepage.html" %}
+
+{% block head %}
+	<title>{{ config.sitename }}</title>
+{% endblock %}
+
+{% block content %}
+	<h1>{{ config.sitename }} - <a href="manage.php">Manage</a></h1>
+	<fieldset>
+		<legend>Configure Site</legend>
+			<form action="?configure" method="post">
+				{% for key, value in config %}
+					<label for="{{ key }}" title="{{ key }}">{{ key }}</label>
+					<input type="text" name="{{ key }}" id="{{ key }}" value="{{ value }}"><br>
+				{% endfor %}
+				<input type="submit" value="Update Config">
+			</form>
+	</fieldset>
+{% endblock %}

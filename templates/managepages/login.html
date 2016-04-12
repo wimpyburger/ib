@@ -1,19 +1,19 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Log In - {{ config.sitename }}</title>
-		<link rel="stylesheet" href="{{ config.siteurl }}/{{ config.defaultcss }}">
-		<meta charset="utf-8">
-    </head>
-    <body>
-        <h1>{{ config.sitename }} - <a href="manage.php">Manage</a></h1>
-		<div class="errorbox">
-			<h2>LOG IN</h2>
-			<form action="" method="post">
-				Username: <input type="text" name="loginusername"><br>
-				Password: <input type="password" name="loginpassword"><br>
-				<input type="submit" value="Login">
-			</form>
-		</div>
-	</body>
-</html>
+{% extends "basepage.html" %}
+
+{% block head %}
+	<title>{{ config.sitename }}</title>
+{% endblock %}
+
+{% block content %}
+	<h1>{{ config.sitename }} - <a href="manage.php">Manage</a></h1>
+	<fieldset>
+		<legend>Log In</legend>
+		<form action="" method="post">
+			<label for="loginusername">Username</label>
+			<input type="text" name="loginusername" id="loginusername"><br>
+			<label for="loginpassword">Password</label>
+			<input type="password" name="loginpassword" id="loginpassword"><br>
+			<input type="submit" value="Login">
+		</form>
+	</fieldset>
+{% endblock %}

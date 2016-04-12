@@ -1,0 +1,27 @@
+{% extends "basepage.html" %}
+
+{% block head %}
+	<title>/{{ board.title }}/ - {{ config.sitename }}</title>
+{% endblock %}
+
+{% block content %}
+	<div class="head">
+		[<a href="{{ config.siteurl }}">Home</a>]
+		[<a href="{{ config.siteurl }}/{{ board.urlid }}/catalogue.html">Catalog</a>]
+		[<a href="{{ config.siteurl }}/manage.php?viewboard&board={{ board.urlid }}">Manage</a>]
+		
+		{% for otherboard in boards %}
+			[<a href="{{ config.siteurl }}/{{ otherboard.urlid }}" title="{{ otherboard.title }}">{{ otherboard.urlid }}</a>]
+		{% endfor %}
+	</div>
+	<h1>/<a href="{{ config.siteurl }}/{{ board.urlid }}/">{{ board.urlid }}</a>/ - <a href="{{ config.siteurl }}/{{ board.urlid }}/">{{ board.title }}</a></h1>
+	{% for thread in threads %}
+		<div class="cataloguethread" id="{{ thread.id }}" onclick="document.location.href = 'res/{{ thread.id }}.html'">
+			{% if thread.filename is not null %}
+				<img src="{{ config.siteurl }}/{{ board.urlid }}/thumb/{{ thread.filename }}">
+			{% endif %}
+			<div class="message">{{ thread.message|raw|nl2br }}</div>
+			<div class="replies">{{ thread.numReplies }} Replies - {{ thread.numImageReplies }} Images</div>
+		</div>
+	{% endfor %}
+{% endblock %}

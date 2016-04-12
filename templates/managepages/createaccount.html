@@ -1,19 +1,19 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>{{ config.sitename }}</title>
-		<link rel="stylesheet" href="{{ config.siteurl }}/{{ config.defaultcss }}">
-		<meta charset="utf-8">
-    </head>
-    <body>
-        <h1>{{ config.sitename }} - <a href="manage.php">Manage</a></h1>
-		<fieldset>
-			<legend>Create User Account</legend>
-				<form action="?createaccount" method="post">
-					Username: <input type="text" name="createusername"><br>
-					Password: <input type="password" name="createpassword"> (max 72 chars)<br>
-					<input type="submit" value="Create Account">
-				</form>
-		</fieldset>
-	</body>
-</html>
+{% extends "basepage.html" %}
+
+{% block head %}
+	<title>{{ config.sitename }}</title>
+{% endblock %}
+
+{% block content %}
+	<h1>{{ config.sitename }} - <a href="manage.php">Manage</a></h1>
+	<fieldset>
+		<legend>Create User Account</legend>
+			<form action="?createaccount" method="post">
+				<label for="createusername">Username</label>
+				<input type="text" name="createusername" id="createusername"><br>
+				<label for="createpassword">Password</label>
+				<input type="password" name="createpassword" id="createpassword"><br>
+				<input type="submit" value="Create Account">
+			</form>
+	</fieldset>
+{% endblock %}

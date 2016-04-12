@@ -1,15 +1,22 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>{{ config.sitename }}</title>
-		<link rel="stylesheet" href="{{ config.siteurl }}/{{ config.defaultcss }}">
-    </head>
-    <body>
-        <h1>{{ config.sitename }}</h1>
+{% extends "basepage.html" %}
+
+{% block head %}
+	<title>{{ config.sitename }}</title>
+{% endblock %}
+
+{% block content %}
+	<h1>{{ config.sitename }}</h1>
+	<div class="box">
+		<h3>Boards</h3>
 		<ul>
 			{% for board in boards %}
-			<li><a href="{{ config.siteurl }}/{{ board.urlid }}">{{ board.urlid }}</a> - {{ board.title }}</li>
+			<li>
+				/<a href="{{ config.siteurl }}/{{ board.urlid }}">{{ board.urlid }}</a>/
+				-
+				<a href="{{ config.siteurl }}/{{ board.urlid }}">{{ board.title }}</a>
+			</li>
 			{% endfor %}
 		</ul>
-	</body>
-</html>
+	</div><br>
+	<a href="{{ config.siteurl }}/inc/recentposts.php">Recent Posts/Stats</a>
+{% endblock %}

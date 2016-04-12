@@ -44,6 +44,21 @@ if(isset($_GET['createboard'])) {
 	die(getPage("managepages/createboard.html", array()));
 }
 
+if(isset($_GET['editboard'])) {
+	if(isset($_POST['title']) && isset($_POST['urlid'])) {
+		$stmt = $conn->prepare("UPDATE boards SET title = :title WHERE urlid = :urlid");
+		$stmt->bindParam(':title', $_POST['title'], PDO::PARAM_STR);
+		$stmt->bindParam(':urlid', $_POST['urlid'], PDO::PARAM_STR);
+		$stmt->execute();
+		completed("Board info changed");
+	}
+	if(isset($_GET['board']) && boardExists($conn, $_GET['board'])) {
+		$boardinfo = getBoardInfo($conn, $_GET['board']);
+		die(getPage("managepages/editboard.html", array('boardInfo'=>$boardinfo)));
+	}
+	error("Board doesn't exist");
+}
+
 if(isset($_GET['manageaccounts'])) {
 	$users = getUsers($conn);
 	die(getPage("managepages/manageaccounts.html", array("users"=>$users,"username"=>$_SESSION['username'])));
@@ -59,6 +74,9 @@ if(isset($_GET['refreshstatic'])) {
 		// create index page
 		createBoardIndex($conn, $board['urlid']);
 		$completedtext .= "<b>" . $board['urlid'] . "</b> index page created<br>";
+		// create catalogue page
+		createCataloguePage($conn, $board['urlid']);
+		$completedtext .= "<b>" . $board['urlid'] . "</b> catalogue page created<br>";
 		// create reply pages
 		$posts = getPosts($conn, $board['urlid']);
 		foreach($posts as $post) {
@@ -103,6 +121,25 @@ if(isset($_GET['deleteaccount'])) {
 	completed("User account deleted");
 }
 
+if(isset($_GET['editaccount'])) {
+	if(!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+		error("Invalid account");
+	}
+	if(!isset($_POST['username'])) {
+		die(getPage("managepages/editaccount.html", array('id'=>$_GET['id'])));
+	}
+	if($_POST['username'] == "") {
+		error("Username field can't be blank");
+	}
+	$passwordhash = password_hash($_POST['password'], PASSWORD_BCRYPT);
+	$stmt = $conn->prepare("UPDATE users SET username = :username, password = :password WHERE id = :id");
+	$stmt->bindParam(':id', $_GET['id'], PDO::PARAM_INT);
+	$stmt->bindParam(':username', $_POST['username'], PDO::PARAM_STR);
+	$stmt->bindParam(':password', $passwordhash, PDO::PARAM_STR);
+	$stmt->execute();
+	completed("Account information modified");
+}
+
 if(isset($_GET['deleteboard'])) {
 	if(!isset($_GET['board']) || !boardExists($conn, $_GET['board'])) {
 		error("Board doesn't exist");
@@ -127,7 +164,7 @@ if(isset($_GET['banposter'])) {
 		try {
 			$stmt->execute();
 		} catch(PDOException $ex) {
-			error("Couldn't create board: " . $ex);
+			error("Couldn't ban user: " . $ex);
 		}
 		completed("Banned");
 	}
@@ -141,6 +178,16 @@ if(isset($_GET['banposter'])) {
 		$ip = $_GET['ip'];
 	}
 	die(getPage("managepages/banposter.html", array("previousbans"=>$previousbans,"ip"=>$ip)));
+}
+
+if(isset($_GET['unbanuser'])) {
+	if(!isset($_GET['ip']) || !filter_var($_GET['ip'], FILTER_VALIDATE_IP)) {
+		error("Invalid IP");
+	}
+	$stmt = $conn->prepare("DELETE FROM bans WHERE ip = :ip");
+	$stmt->bindParam(":ip", $_GET['ip'], PDO::PARAM_STR);
+	$stmt->execute();
+	completed("User has been unbanned");
 }
 
 if(isset($_GET['managebans'])) {
@@ -158,6 +205,27 @@ if(isset($_GET['managebans'])) {
 	$stmt->execute();
 	$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 	die(getPage("managepages/managebans.html", array("bans"=>$result, "ip"=>$ip)));
+}
+
+if(isset($_GET['postsbyip'])) {
+	// get all posts by a specified ip address
+	if(!isset($_GET['ip']) || !filter_var($_GET['ip'], FILTER_VALIDATE_IP)) {
+		error("Invalid ip address");
+	}
+	// get for each board
+	$posts = [];
+	$boards = getBoards($conn);
+	foreach($boards as $board) {
+		$stmt = $conn->prepare("SELECT * FROM posts_" . $board['urlid'] . " WHERE ip = :ip");
+		$stmt->bindParam(":ip", $_GET['ip'], PDO::PARAM_STR);
+		$stmt->execute();
+		$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		foreach($result as $post) {
+			$post['urlid'] = $board['urlid'];
+			array_push($posts, $post);
+		}
+	}
+	die(getPage("managepages/postsbyip.html", array("posts"=>$posts)));
 }
 
 ?>

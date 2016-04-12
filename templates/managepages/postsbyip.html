@@ -1,0 +1,42 @@
+{% extends "basepage.html" %}
+
+{% block head %}
+	<title>{{ config.sitename }}</title>
+	<script src="{{ config.siteurl }}/inc/js/manage.js"></script>
+{% endblock %}
+
+{% block content %}
+	<h1>{{ config.sitename }} - <a href="manage.php">Manage</a></h1>
+	<fieldset>
+		<legend>View Posts by IP</legend>
+			{% for post in posts %}
+				{% if post.parent == 0 %}
+					<div class="thread">
+						<b>{{ post.subject }}</b> <i>{{ post.name }}</i>
+						<small>{{ post.date|date("d/m/y H:i:s") }}</small> No.{{ post.id }} - 
+						[<a href="?viewboard&board={{ post.urlid }}&thread={{ post.id }}">Reply</a>]
+						<br>[<a href="{{ config.siteurl }}/manage.php?deletepost&board={{ post.urlid }}&id={{ post.id }}">Delete</a>]
+						[<a href="{{ config.siteurl }}/manage.php?banposter&ip={{ post.ip }}">Ban</a>]
+						<br>
+						{% if post.filename is not null %}
+							<a href="{{ config.siteurl }}/{{ post.urlid }}/src/{{ post.filename }}"><img src="{{ config.siteurl }}/{{ post.urlid }}/thumb/{{ post.filename }}" id="image"></a>
+						{% endif %}
+						<div id="message">{{ post.message|raw|nl2br }}</div>
+					</div>
+				{% else %}
+					<div class="reply">
+						<i>{{ post.name }}</i>
+						<small>{{ post.date|date("d/m/y H:i:s") }}</small> No.{{ post.id }} - 
+						[<a href="?viewboard&board={{ post.urlid }}&thread={{ post.parent }}">Thread</a>]
+						<br>[<a href="{{ config.siteurl }}/manage.php?deletepost&board={{ post.urlid }}&id={{ post.id }}">Delete</a>]
+						[<a href="{{ config.siteurl }}/manage.php?banposter&ip={{ post.ip }}">Ban</a>]
+						<br>
+						{% if post.filename is not null %}
+							<a href="{{ config.siteurl }}/{{ post.urlid }}/src/{{ post.filename }}"><img src="{{ config.siteurl }}/{{ post.urlid }}/thumb/{{ post.filename }}" id="image"></a>
+						{% endif %}
+						<div id="message">{{ post.message|raw|nl2br }}</div>
+					</div>
+				{% endif %}
+			{% endfor %}
+	</fieldset>
+{% endblock %}

@@ -1,33 +1,33 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>{{ config.sitename }}</title>
-		<link rel="stylesheet" href="{{ config.siteurl }}/{{ config.defaultcss }}">
-		<meta charset="utf-8">
-    </head>
-    <body>
-        <h1>{{ config.sitename }} - <a href="manage.php">Manage</a></h1>
-		<fieldset>
-			<legend>Manage Accounts</legend>
-			<table>
+{% extends "basepage.html" %}
+
+{% block head %}
+	<title>{{ config.sitename }}</title>
+{% endblock %}
+
+{% block content %}
+	<h1>{{ config.sitename }} - <a href="manage.php">Manage</a></h1>
+	<fieldset>
+		<legend>Manage Accounts</legend>
+		<table>
+			<tr>
+				<th>ID</th>
+				<th>Username</th>
+				<th></th>
+				<th></th>
+			</tr>
+			{% for user in users %}
 				<tr>
-					<th>ID</th>
-					<th>Username</th>
-					<th></th>
+					<td>{{ user.id }}</td>
+					<td>{{ user.username }}</td>
+					<td><a href="?editaccount&id={{ user.id }}">Edit</a></td>
+					{% if user.username == username %}
+						<td>Can't delete</td>
+					{% else %}
+						<td><a href="?deleteaccount&id={{ user.id }}">Delete</a></td>
+					{% endif %}
 				</tr>
-				{% for user in users %}
-					<tr>
-						<td>{{ user.id }}</td>
-						<td>{{ user.username }}</td>
-						{% if user.username == username %}
-							<td>Can't delete</td>
-						{% else %}
-							<td><a href="?deleteaccount&id={{ user.id }}">Delete</a></td>
-						{% endif %}
-					</tr>
-				{% endfor %}
-				</table>
-				<a href="?createaccount">Create new</a>
-		</fieldset>
-	</body>
-</html>
+			{% endfor %}
+			</table>
+			<a href="?createaccount">Create new</a>
+	</fieldset>
+{% endblock %}

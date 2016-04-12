@@ -1,41 +1,41 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>{{ config.sitename }}</title>
-		<link rel="stylesheet" href="{{ config.siteurl }}/{{ config.defaultcss }}">
-    </head>
-    <body>
-        <h1>{{ config.sitename }} - Manage</h1>
-		<fieldset>
-			<legend>Manage Boards</legend>
-				<ul>
-					{% for board in boards %}
-					<li>
-						<a href="?viewboard&board={{ board.urlid }}">{{ board.urlid }}</a> - {{ board.title }}
-						[<a href="?deleteboard&board={{ board.urlid }}">Delete</a>]
-					</li>
-					{% endfor %}
-				</ul>
-				<a href="?createboard">Create new board</a>
-		</fieldset>
-		
-		<fieldset>
-			<legend>Maintenance</legend>
-				<ul>
-					<li><a href="?configure">Configure site settings</a></li>
-					<li><a href="?refreshstatic">Remake static pages</a></li>
-					<li><a href="?managebans">Manage bans</a></li>
-					<li><a href="?banposter">Ban poster</a></li>
-				</ul>
-		</fieldset>
-		
-		<fieldset>
-			<legend>Users</legend>
+{% extends "basepage.html" %}
+
+{% block head %}
+	<title>{{ config.sitename }}</title>
+{% endblock %}
+
+{% block content %}
+	<h1>{{ config.sitename }} - Manage</h1>
+	<fieldset>
+		<legend>Manage Boards</legend>
 			<ul>
-				<li><a href="?logout">Log out</a></li>
-				<li><a href="?createaccount">Create user account</a></li>
-				<li><a href="?manageaccounts">Manage accounts</a></li>
+				{% for board in boards %}
+				<li>
+					/<a href="?viewboard&board={{ board.urlid }}">{{ board.urlid }}</a>/ - {{ board.title }}
+					[<a href="?deleteboard&board={{ board.urlid }}">Delete</a>]
+					[<a href="?editboard&board={{ board.urlid }}">Edit</a>]
+				</li>
+				{% endfor %}
 			</ul>
-		</fieldset>
-	</body>
-</html>
+			<a href="?createboard">Create new board</a>
+	</fieldset>
+	
+	<fieldset>
+		<legend>Maintenance</legend>
+			<ul>
+				<li><a href="?configure">Configure site settings</a></li>
+				<li><a href="?refreshstatic">Remake static pages</a></li>
+				<li><a href="?managebans">Manage bans</a></li>
+				<li><a href="?banposter">Ban poster</a></li>
+			</ul>
+	</fieldset>
+	
+	<fieldset>
+		<legend>Users</legend>
+		<ul>
+			<li><a href="?logout">Log out</a></li>
+			<li><a href="?createaccount">Create user account</a></li>
+			<li><a href="?manageaccounts">Manage accounts</a></li>
+		</ul>
+	</fieldset>
+{% endblock %}

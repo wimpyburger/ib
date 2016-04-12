@@ -1,15 +1,14 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Banned - {{ config.sitename }}</title>
-		<link rel="stylesheet" href="{{ config.siteurl }}/{{ config.defaultcss }}">
-    </head>
-    <body>
-        <h1>{{ config.sitename }}</h1>
-		<div class="errorbox">
-			<h2>YOU ARE BANNED</h2>
-			You're ip (<b>{{ info.ip }}</b>) has been banned from <b>{{ info.date|date("d/m/y H:i:s") }}</b> until <b>{{ info.expires|date("d/m/y H:i:s") }}</b>.<br>
-			The reason given is:<br><div id="message">{{ info.reason }}</div>
-		</div>
-	</body>
-</html>
+{% extends "basepage.html" %}
+
+{% block head %}
+	<title>Banned - {{ config.sitename }}</title>
+{% endblock %}
+
+{% block content %}
+	<h1>{{ config.sitename }}</h1>
+	<div class="errorbox">
+		<h2>YOU ARE BANNED</h2>
+		Your IP address (<b>{{ info.ip }}</b>) has been banned from <b>{{ info.date|date("d/m/y H:i:s") }}</b> until <b>{{ info.expires|date("d/m/y H:i:s") }}</b>.<br>
+		The reason given is:<br><div id="message">{{ info.reason }}</div>
+	</div>
+{% endblock %}
