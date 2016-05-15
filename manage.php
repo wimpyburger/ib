@@ -14,15 +14,17 @@ $conn = sqlConnect();
 
 if(isset($_POST['loginusername']) && isset($_POST['loginpassword'])) {
 	// check its valid
-	$stmt = $conn->prepare("SELECT password FROM users WHERE username = :username");
+	$stmt = $conn->prepare("SELECT id, password FROM users WHERE username = :username");
 	$stmt->bindParam(':username', $_POST['loginusername'], PDO::PARAM_STR);
 	$stmt->execute();
-	$passwordhash = $stmt->fetch()[0];
-	if(!$passwordhash) {
+	$result = $stmt->fetch();
+	if(!$result[1]) {
 		error("Invalid username or password"); // username doesn't exist
 	}
-	if(password_verify($_POST['loginpassword'], $passwordhash)) {
+	if(password_verify($_POST['loginpassword'], $result[1])) {
 		$_SESSION['username'] = $_POST['loginusername'];
+		$_SESSION['userid'] = $result[0];
+		addAdminAction($conn, $_SESSION['userid'], "Logged in");
 	} else {
 		error("Invalid username or password"); // wrong pass
 	}
@@ -39,7 +41,6 @@ if(!$config['installed']) {
 	echo "<br>Board doesn't seem to be installed. <a href=\"?install\">Install now</a>. Otherwise, change 'installed' value in config to 1";
 }
 
-// very basic login stuff
 if(!isset($_SESSION['username'])) {
 	die(getPage("managepages/login.html", array()));
 }

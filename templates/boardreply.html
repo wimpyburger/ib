@@ -17,16 +17,22 @@
 	{% if managing == true %}
 		<div class="notif"><a href="manage.php">Return to manage panel</a></div>
 	{% endif %}
+	
 	<h1>/{{ board.urlid }}/ - {{ board.title }}</h1>
 	<form action="{{ config.siteurl }}/inc/post.php?board={{ board.urlid }}&parent={{ threadid }}" method="post" enctype="multipart/form-data" class="postform">
 		<label for="name">Name</label>
 		<input type="text" name="namefield" id="name"><br>
 		<label for="message">Message</label>
 		<textarea name="textfield" id="message"></textarea><br>
-		<label for="image">Image</label>
-		<input name="imagefield" type="file" id="image"><br>
+		{% if config.textonly != 1 %}
+			<label for="image">Image</label>
+			<input name="imagefield" type="file" id="image"><br>
+		{% else %}
+			<input name="imagefield" type="hidden" id="image">
+		{% endif %}
 		<input type="submit" value="Post">
 	</form>
+	
 	<hr>
 	{% if managing == true %}
 		<div class="notif">REPLYING TO POST {{ post.id }} - <a href="?viewboard&board={{ board.urlid }}">Return</a></div>
@@ -34,34 +40,54 @@
 		<div class="notif">REPLYING TO POST {{ post.id }} - <a href="{{ config.siteurl }}/{{ board.urlid }}">Return</a></div>
 	{% endif %}
 	<hr>
-	<div class="thread">
-		<b>{{ post.subject|raw }}</b> <i>{{ post.name|raw }}</i>
-		<small>{{ post.date|date("d/m/y H:i:s") }}</small> No.<a href="#" class="postid">{{ post.id }}</a>
-		{% if managing == true %}
-			<br>[<a href="{{ config.siteurl }}/manage.php?deletepost&board={{ board.urlid }}&id={{ post.id }}">Delete</a>]
-			[<a href="{{ config.siteurl }}/manage.php?banposter&ip={{ post.ip }}">Ban</a>]
-			[<a href="{{ config.siteurl }}/manage.php?postsbyip&ip={{ post.ip }}">User Posts</a>]
-		{% endif %}
-		<br>
-		{% if post.filename is not null %}
-			<a href="{{ config.siteurl }}/{{ board.urlid }}/src/{{ post.filename }}" class="imagelink"><img src="{{ config.siteurl }}/{{ board.urlid }}/thumb/{{ post.filename }}" class="image"></a>
-		{% endif %}
-		<div class="message">{{ post.message|raw|nl2br }}</div>
-	</div>
-	{% for reply in replies %}
-		<div class="reply" id="{{ reply.id }}">
-			<i>{{ reply.name }}</i>
-			<small>{{ reply.date|date("d/m/y H:i:s") }}</small> <a href="#{{ reply.id }}">No</a>.<a href="#" class="postid">{{ reply.id }}</a>
-			{% if managing == true %}
-				<br>[<a href="{{ config.siteurl }}/manage.php?deletepost&board={{ board.urlid }}&id={{ reply.id }}">Delete</a>]
-				[<a href="{{ config.siteurl }}/manage.php?banposter&ip={{ reply.ip }}">Ban</a>]
-				[<a href="{{ config.siteurl }}/manage.php?postsbyip&ip={{ reply.ip }}">User Posts</a>]
+	
+	<div class="threadreply">
+	
+		<div class="op" id="{{ post.id }}">
+		
+			<div class="postinfo">
+				{% if post.subject != "" %}
+					<span class="subject">{{ post.subject|raw }}</span>
+				{% endif %}
+				<span class="name">{{ post.name|raw }}</span>
+				{{ post.date|date("d/m/y H:i:s") }}
+				<span class="postnum"><a href="#" id="postno">No.</a><a href="#" class="postid">{{ post.id }}</a></span>
+				{% if managing == true %}
+					IP: {{ post.ip }}
+					[<a href="{{ config.siteurl }}/manage.php?deletepost&board={{ board.urlid }}&id={{ post.id }}">Delete</a>]
+					[<a href="{{ config.siteurl }}/manage.php?banposter&ip={{ post.ip }}">Ban</a>]
+					[<a href="{{ config.siteurl }}/manage.php?postsbyip&ip={{ post.ip }}">User Posts</a>]
+				{% endif %}
+			</div>
+			
+			{% if post.filename is not null %}
+				<a href="{{ config.siteurl }}/{{ board.urlid }}/src/{{ post.filename }}" class="imagelink"><img src="{{ config.siteurl }}/{{ board.urlid }}/thumb/{{ post.filename }}" class="image"></a>
 			{% endif %}
-			<br>
-			{% if reply.filename is not null %}
-				<a href="{{ config.siteurl }}/{{ board.urlid }}/src/{{ reply.filename }}" class="imagelink"><img src="{{ config.siteurl }}/{{ board.urlid }}/thumb/{{ reply.filename }}" class="image"></a>
-			{% endif %}
-			<div class="message">{{ reply.message|raw|nl2br }}</div>
+			<div class="message">{{ post.message|raw|nl2br }}</div>
 		</div>
-	{% endfor %}
+	
+		{% for reply in replies %}
+			<div class="reply" id="{{ reply.id }}">
+			
+				<div class="postinfo">
+					<span class="name">{{ reply.name }}</span>
+					{{ reply.date|date("d/m/y H:i:s") }}
+					<span class="postnum"><a href="#{{ reply.id }}" id="postno">No</a>.<a href="#" class="postid">{{ reply.id }}</a></span>
+					{% if managing == true %}
+						IP: {{ reply.ip }}
+						[<a href="{{ config.siteurl }}/manage.php?deletepost&board={{ board.urlid }}&id={{ reply.id }}">Delete</a>]
+						[<a href="{{ config.siteurl }}/manage.php?banposter&ip={{ reply.ip }}">Ban</a>]
+						[<a href="{{ config.siteurl }}/manage.php?postsbyip&ip={{ reply.ip }}">User Posts</a>]
+					{% endif %}
+				</div>
+				
+				{% if reply.filename is not null %}
+					<a href="{{ config.siteurl }}/{{ board.urlid }}/src/{{ reply.filename }}" class="imagelink"><img src="{{ config.siteurl }}/{{ board.urlid }}/thumb/{{ reply.filename }}" class="image"></a>
+				{% endif %}
+				<div class="message">{{ reply.message|raw|nl2br }}</div>
+			</div>
+		{% endfor %}
+		
+	</div>
+	
 {% endblock %}

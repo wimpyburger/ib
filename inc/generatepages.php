@@ -13,9 +13,14 @@ function createSiteIndex($conn) {
 
 function createBoardIndex($conn, $urlid) {
 	global $config;
+	include $config['rootdir'] . "/inc/config.php";
+	include $config['rootdir'] . "/$urlid/config.php";
 	$boardinfo = getBoardInfo($conn, $urlid);
 	$boards = getBoards($conn);
 	$threads = getPosts($conn, $urlid);
+	foreach($threads as $key=>$value) {
+		$threads[$key]['replies'] = getNumReplies($conn, $urlid, $value['id'], $config['displayedreplies']);
+	}
 	// create file
 	$path = $config['rootdir'] . "/$urlid/index.html";
 	$index = fopen($path, "w");
@@ -59,6 +64,9 @@ function getManageBoardIndex($conn, $urlid) {
 	$boardinfo = getBoardInfo($conn, $urlid);
 	$boards = getBoards($conn);
 	$threads = getPosts($conn, $urlid);
+	foreach($threads as $key=>$value) {
+		$threads[$key]['replies'] = getNumReplies($conn, $urlid, $value['id'], $config['displayedreplies']);
+	}
 	return getPage("boardpage.html", array("board"=>$boardinfo, "boards"=>$boards, "threads"=>$threads, "managing"=>true));
 }
 

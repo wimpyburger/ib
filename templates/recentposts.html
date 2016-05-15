@@ -14,7 +14,7 @@
 	<div class="box">
 		<h3>Recent Images</h3>
 		{% for image in images %}
-			<a href="{{ config.siteurl }}/{{ image.board.urlid }}/res/{{ image.url }}.html">
+			<a href="{{ config.siteurl }}/{{ image.board.urlid }}/res/{{ image.url }}.html#{{ image.id }}">
 				<img src="{{ config.siteurl }}/{{ image.board.urlid }}/thumb/{{ image.filename }}">
 			</a>
 		{% endfor %}
@@ -25,7 +25,7 @@
 			{% for post in posts %}
 			<li>
 				<a href="{{ config.siteurl }}/{{ post.board.urlid }}/" class="board">{{ post.board.title }}</a>
-				<a href="{{ config.siteurl }}/{{ post.board.urlid }}/res/{{ post.url }}.html">{{ post.message }}</a>
+				<a href="{{ config.siteurl }}/{{ post.board.urlid }}/res/{{ post.url }}.html#{{ post.id }}">{{ post.message|raw }}</a>
 			</li>
 			{% endfor %}
 		</ul>

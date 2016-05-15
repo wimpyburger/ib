@@ -1,0 +1,355 @@
+body {
+	background:#FFF;
+	color:#000;
+	font-size:16px;
+	font-family:verdana;
+}
+
+.threadmain .reply {
+	display:none;
+}
+
+.threadmain {
+	padding:10px;
+	border-bottom:1px solid #AAA;
+	overflow:hidden;
+}
+
+.threadreply .op .message {
+	padding:10px;
+}
+
+.threadreply .op {
+	padding:10px;
+	border-bottom:2px solid #EEE;
+	overflow:hidden;
+}
+
+.reply {
+	padding:10px;
+	border-bottom:1px solid #DDD;
+	overflow:hidden;
+	margin-top:5px;
+}
+
+.selected {
+	background:#000;
+	padding:10px;
+	border-bottom:1px solid #BBB;
+	overflow:hidden;
+	margin-top:5px;
+}
+
+.image {
+	float:left;
+	margin-right:8px;
+}
+
+.message {
+	word-break:break-all;
+	display:inline-block;
+	margin-left:12px;
+	margin-right:12px;
+	margin-top:5px;
+}
+
+.notif {
+    text-align:center;
+    text-decoration:underline;
+    font-weight:bold;
+}
+
+.notif a:before {
+	content:'(';
+	color:#000;
+}
+
+.notif a:after {
+	content:')';
+	color:#000;
+}
+
+table {
+    border-collapse:collapse;
+}
+
+table td, table th {
+	padding:5px;
+    border:1px solid black;
+}
+
+fieldset {
+	color:#000;
+	background:#FFF;
+	margin-bottom:12px;
+	border: 1px solid #000;
+	padding:0;
+}
+
+fieldset legend {
+	background:#EEE;
+	width:100%;
+	padding:0;
+    text-transform:uppercase;
+	font-weight:bold;
+	font-size:20px;
+}
+
+a {
+	color:#00AA00;
+}
+
+a:hover {
+	color:#00FF00;
+}
+
+form {
+	width:400px;
+	padding:10px;
+}
+
+.postform {
+	margin-top:5px;
+    background:#DDD;
+    color:#444;
+    border:1px solid #CCC;
+    text-shadow:0px 1px 0px rgba(255, 255, 255, 1);
+}
+
+form label {
+	display:inline-block;
+	width:80px;
+	vertical-align:top;
+	box-sizing:border-box;
+	overflow:hidden;
+	text-overflow:ellipsis;
+}
+
+form input {
+	width:300px;
+	box-sizing:border-box;
+	margin-bottom:1px;
+}
+
+form input[type=submit] {
+	margin-left:84px;
+}
+
+form textarea {
+	box-sizing:border-box;
+	margin-bottom:1px;
+	width:300px;
+	height:80px;
+}
+
+form select {
+	width:300px;
+}
+
+.preview {
+	position:absolute;
+	display:inline-block;
+	margin-top:10px;
+	color:#000;
+	font-size:14px;
+}
+
+.preview .reply {
+	display:block;
+	background:#FFF;
+	border:1px solid #AAA;
+}
+
+.preview  .thread {
+	overflow:hidden;
+	border:1px solid #DDD;
+	padding:5px;
+	background:#FFF;
+}
+
+.threadmain .selected {
+	display:none;
+}
+
+.footer {
+	margin:10px;
+	text-align:center;
+	font-size:12px;
+}
+
+#styleswitch {
+	position:absolute;
+	right:5%;
+}
+
+hr {
+	border:none;
+    height:1px;
+	color:#AAA;
+	background-color:#AAA;
+	margin-bottom:0;
+}
+
+.cataloguethread {
+    vertical-align:top;
+    display:inline-block;
+    word-wrap:break-word;
+    overflow:hidden;
+    margin:7px;
+    padding:10px;
+	width:200px;
+	border-bottom:1px solid #DDD;
+	max-height:200px;
+	text-align:center;
+}
+
+.cataloguethread:hover {
+	cursor:pointer;
+}
+
+.cataloguethread .message {
+	display:block;
+	margin:0;
+	max-height:80px;
+	white-space:nowrap;
+	overflow:hidden;
+}
+
+.cataloguethread .message a {
+	pointer-events:none;
+    cursor:default;
+}
+
+.cataloguethread .replies {
+	float:none;
+}
+
+.box {
+    margin:4px;
+	background:#FFF;
+	border:1px solid #000;
+	padding:1px;
+	color:#000;
+}
+
+.box h3 {
+	margin:0;
+	margin-bottom:15px;
+	background:#EEE;
+	text-transform:uppercase;
+}
+
+.box .board {
+	font-weight:bold;
+}
+
+.head {
+	margin-top:5px;
+	color:#FFF;
+}
+
+.changed {
+	background:#AFA;
+	border:1px solid #5A5;
+	width:250px;
+	padding:2px;
+}
+
+form input[type=button].reset {
+	width:50px;
+	margin-left:-5px;
+}
+
+.subject {
+	font-weight:bold;
+	color: #00AA00;
+}
+
+.subject:before {
+	content:"Subject: ";
+	color:#000;
+}
+
+.name {
+	color:#FF0000;
+}
+
+.name:before {
+	content:"Name: ";
+	color:#000;
+}
+
+.name:after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;;
+}
+
+.postnum {
+	visibility:hidden;
+	float:left;
+	margin-right:10px;
+}
+
+.postnum a {
+	text-decoration:none;
+}
+
+.postnum #postno:before {
+	content:"#";
+	visibility:visible;
+	font-weight:normal;
+	margin-right:2px;
+}
+
+.postnum .postid {
+	visibility:visible;
+	margin-left:-30px;
+	font-weight:bold;
+}
+
+.postnum:after {
+	content:" -";
+	visibility:visible;
+}
+
+.greentext {
+	color:#9ABB44;
+}
+
+.replylink {
+	font-size:11px;
+	margin-left:5px;
+	display:inline-block;
+}
+
+h1 {
+	color:#FF0000;
+	margin:0;
+}
+
+.treply {
+	visibility:hidden;
+}
+
+.treply a {
+	visibility:visible;
+}
+
+.treply:before {
+	content:'-';
+	color:#000;
+	visibility:visible;
+}
+
+.treply a:before {
+	content:'(';
+	color:#000;
+}
+
+.treply a:after {
+	content:')';
+	color:#000;
+}	

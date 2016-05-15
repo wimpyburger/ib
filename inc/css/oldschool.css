@@ -1,68 +1,66 @@
 body {
-	font-family:sans-serif;
-	background:#f1f1f1;
+	font-family:serif;
+	background:#C5AD99 url(../img/bricks.gif) repeat;
 	color:#000;
 	width:90%;
 	margin:auto;
-	font-size:14px;
+	font-size:16px;
 }
 
 .threadmain {
-	padding:10px;
-	margin-bottom:10px;
-	background:#FFF;
+	background:#EFEFEF;
+	padding:12px;
+	border:1px outset white;
+	outline:1px inset #FFF;
+	outline-offset:-8px;
 	overflow:hidden;
-	border-bottom:1px solid #DDD;
-}
-
-.threadmain .op {
-	margin-bottom:10px;
+	margin-bottom:20px;
 }
 
 .threadreply {
-	margin-bottom:5px;
+	background:#EFEFEF;
+	padding:12px;
+	border:1px outset white;
+	overflow:hidden;
+	margin-bottom:10px;
 }
 
-.threadreply .op {
-	padding:10px;
-	background:#FFF;
-	border-bottom:1px solid #DDD;
-	overflow:hidden;
-	margin-bottom:5px;
+.op {
+	display:table;
 }
 
 .reply {
-	background:#E5E5E5;
+	background:#EFEFEF;
 	padding:10px;
-	border-bottom:1px solid #CCC;
+	padding-left:0;
 	overflow:hidden;
-	margin-bottom:5px;
 }
 
 .selected {
 	background:#D4D4D4;
-	padding:10px;
-	border-bottom:1px solid #BBB;
+	margin:10px;
+	margin-left:0;
 	overflow:hidden;
-	margin-bottom:5px;
 }
 
 .image {
 	float:left;
-	margin-right:5px;
+	margin-left:25px;
 }
 
 .message {
-	margin-left:15px;
-	margin-top:5px;
+	margin-left:25px;
+	margin-top:10px;
 	display:inline-block;
 	word-break:break-all;
 }
 
 .notif {
-	margin-top:5px;
-	background:#BFDFFF;
-	padding:4px;
+	border:1px outset white;
+	outline:1px inset #FFF;
+	outline-offset:-8px;
+	padding:12px;
+	background:#CCFFCC;
 }
 
 table {
@@ -86,28 +84,25 @@ fieldset legend {
 }
 
 a {
-	color:#00C;
+	color:#00F;
 	text-decoration:none;
 }
 
 a:hover {
-	color:#C00;
+	color:#F00;
 }
 
 .replies {
-	color:#777;
-	float:right;
-	font-size:14px;
-}
-
-form {
-	width:385px;
-	padding:10px;
+	color:#AAA;
+	font-size:16px;
 }
 
 .postform {
-	border-bottom:1px solid #DDD;
-	background:#FFF;
+	border:1px outset white;
+	outline:1px inset #FFF;
+	outline-offset:-8px;
+	padding:12px;
+	background:#CCFFCC;
 }
 
 form label {
@@ -140,10 +135,26 @@ form select {
 	width:300px;
 }
 
+.preview {
+	position:absolute;
+	display:inline-block;
+	margin-top:10px;
+	color:#000;
+	font-size:14px;
+}
+
 .preview  .thread {
-	border:1px solid #DDD;
 	overflow:hidden;
 	padding:5px;
+	background:#EFEFEF;
+	outline:1px inset #FFF;
+	outline-offset:-8px;
+	padding:12px;
+	border:1px outset white;
+}
+
+.preview .reply {
+	border: 1px outset white;
 }
 
 .footer {
@@ -160,6 +171,7 @@ form select {
 
 hr {
 	border:0;
+	height:10px;
 }
 
 .cataloguethread {
@@ -167,11 +179,13 @@ hr {
     display:inline-block;
     word-wrap:break-word;
     overflow:hidden;
-    margin:7px;
-    padding:10px;
-	background:#FFF;
+	background:#EFEFEF;
+	padding:12px;
+	border:1px outset white;
+	outline:1px inset #FFF;
+	outline-offset:-8px;
+	margin-bottom:5px;
 	width:200px;
-	border-bottom:1px solid #DDD;
 	max-height:200px;
 	text-align:center;
 }
@@ -202,10 +216,12 @@ hr {
     display:inline-block;
     margin-right:7px;
 	margin-bottom:7px;
-    padding:10px;
-	background:#FFF;
 	max-width:412px;
-	border-bottom:1px solid #DDD;
+	background:#EFEFEF;
+	padding:12px;
+	border:1px outset white;
+	outline:1px inset #FFF;
+	outline-offset:-8px;
 }
 
 .box h3 {
@@ -247,7 +263,9 @@ form input[type=button].reset {
 
 .subject {
 	font-weight:bold;
-	color:#cc1105;
+	display:block;
+	color:#F00;
+	font-size:20px;
 }
 
 .name {
@@ -255,10 +273,19 @@ form input[type=button].reset {
 	color:green;
 }
 
-.thread .reply {
-	margin-top:8px;
+.postnum {
+	float:left;
+	font-weight:bold;
+	margin-right:22px;
 }
 
 .greentext {
-	color:#9ABB44;
+	color:green;
+}
+
+.replylink {
+	font-size:12px;
+	text-decoration:underline;
+	margin-left:5px;
+	display:inline-block;
 }

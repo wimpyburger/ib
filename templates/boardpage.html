@@ -25,31 +25,75 @@
 		<input type="text" name="subjectfield" id="subject"><br>
 		<label for="message">Message</label>
 		<textarea name="textfield" id="message"></textarea><br>
-		<label for="image">Image</label>
-		<input name="imagefield" type="file" id="image"><br>
+		{% if config.textonly != 1 %}
+			<label for="image">Image</label>
+			<input name="imagefield" type="file" id="image"><br>
+		{% else %}
+			<input name="imagefield" type="hidden" id="image">
+		{% endif %}
 		<input type="submit" value="Post">
 	</form>
 	<hr>
+	
 	{% for thread in threads %}
-		<div class="thread">
-			<b>{{ thread.subject|raw }}</b> <i>{{ thread.name|raw }}</i>
-			<small>{{ thread.date|date("d/m/y H:i:s") }}</small> No.<a href="#" class="postid">{{ thread.id }}</a>  - 
-			{% if managing == true %}
-				[<a href="?viewboard&board={{ board.urlid }}&thread={{ thread.id }}">Reply</a>]
-			{% else %}
-				[<a href="res/{{ thread.id }}.html">Reply</a>]
-			{% endif %}
-			<div class="replies">{{ thread.numReplies }} Replies - {{ thread.numImageReplies }} Images</div>
-			{% if managing == true %}
-				<br>[<a href="{{ config.siteurl }}/manage.php?deletepost&board={{ board.urlid }}&id={{ thread.id }}">Delete</a>]
-				[<a href="{{ config.siteurl }}/manage.php?banposter&ip={{ thread.ip }}">Ban</a>]
-				[<a href="{{ config.siteurl }}/manage.php?postsbyip&ip={{ thread.ip }}">User Posts</a>]
-			{% endif %}
-			<br>
-			{% if thread.filename is not null %}
-				<a href="{{ config.siteurl }}/{{ board.urlid }}/src/{{ thread.filename }}" class="imagelink"><img src="{{ config.siteurl }}/{{ board.urlid }}/thumb/{{ thread.filename }}" class="image"></a>
-			{% endif %}
-			<div class="message">{{ thread.message|raw|nl2br }}</div>
+		<div class="threadmain">
+			<div class="op" id="{{ thread.id }}">
+			
+				<div class="postinfo">
+					{% if thread.subject != "" %}
+						<span class="subject">{{ thread.subject|raw }}</span>
+					{% endif %}
+					
+					<span class="name">{{ thread.name|raw }}</span>
+					
+					{{ thread.date|date("d/m/y H:i:s") }}
+					
+					<span class="postnum"><a href="{{ config.siteurl }}/{{ board.urlid }}/res/{{ thread.id }}.html" id="postno">No.</a><a href="#" class="postid">{{ thread.id }}</a></span>
+					
+					{% if managing == true %}
+						<span class="treply">[<a href="?viewboard&board={{ board.urlid }}&thread={{ thread.id }}">Reply</a>]</span>
+					{% else %}
+						<span class="treply">[<a href="res/{{ thread.id }}.html">Reply</a>]</span>
+					{% endif %}
+					
+					{% if managing == true %}
+						IP: {{ thread.ip }}
+						[<a href="{{ config.siteurl }}/manage.php?deletepost&board={{ board.urlid }}&id={{ thread.id }}">Delete</a>]
+						[<a href="{{ config.siteurl }}/manage.php?banposter&ip={{ thread.ip }}">Ban</a>]
+						[<a href="{{ config.siteurl }}/manage.php?postsbyip&ip={{ thread.ip }}">User Posts</a>]
+					{% endif %}
+				</div>
+				
+				<div class="replies">{{ thread.numReplies }} Replies - {{ thread.numImageReplies }} Images</div>
+				
+				{% if thread.filename is not null %}
+					<a href="{{ config.siteurl }}/{{ board.urlid }}/src/{{ thread.filename }}" class="imagelink"><img src="{{ config.siteurl }}/{{ board.urlid }}/thumb/{{ thread.filename }}" class="image"></a>
+				{% endif %}
+				<div class="message">{{ thread.message|raw|nl2br }}</div>
+			</div>
+			
+			{% for reply in thread.replies %}
+				<div class="reply" id="{{ reply.id }}">
+				
+					<div class="postinfo">
+						<span class="name">{{ reply.name }}</span>
+						{{ reply.date|date("d/m/y H:i:s") }}
+						<span class="postnum"><a href="{{ config.siteurl }}/{{ board.urlid }}/res/{{ thread.id }}.html#{{ reply.id }}" id="postno">No</a>.<a href="#" class="postid">{{ reply.id }}</a></span>
+						{% if managing == true %}
+							<br>
+							[<a href="{{ config.siteurl }}/manage.php?deletepost&board={{ board.urlid }}&id={{ reply.id }}">Delete</a>]
+							[<a href="{{ config.siteurl }}/manage.php?banposter&ip={{ reply.ip }}">Ban</a>]
+							[<a href="{{ config.siteurl }}/manage.php?postsbyip&ip={{ reply.ip }}">User Posts</a>]
+						{% endif %}
+					</div>
+					
+					{% if reply.filename is not null %}
+						<a href="{{ config.siteurl }}/{{ board.urlid }}/src/{{ reply.filename }}" class="imagelink"><img src="{{ config.siteurl }}/{{ board.urlid }}/thumb/{{ reply.filename }}" class="image"></a>
+					{% endif %}
+					<div class="message">{{ reply.message|raw|nl2br }}</div>
+				</div>
+			{% endfor %}
+			
 		</div>
 	{% endfor %}
 {% endblock %}

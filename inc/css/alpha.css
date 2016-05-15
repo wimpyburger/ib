@@ -4,16 +4,27 @@ body {
 	color:#444;
 	width:90%;
 	margin:auto;
-	font-size:18px;
+	font-size:14px;
 }
 
 fieldset {
 	margin-bottom:12px;
 }
 
-.thread {
+.threadmain {
+	background:#FFF;
+	overflow:hidden;
+	border-bottom:1px solid #BBB;
+}
+
+.op {
 	background:#FFF;
 	padding:10px;
+}
+
+.threadreply .op {
+	padding:10px;
+	background:#FFF;
 	border-bottom:1px solid #BBB;
 	overflow:hidden;
 }
@@ -34,6 +45,7 @@ fieldset {
 
 .image {
 	float:left;
+	margin-bottom:5px;
 }
 
 .message {
@@ -104,6 +116,7 @@ form textarea {
 
 .preview {
 	border:1px solid #AAA;
+	overflow:hidden;
 }
 
 .footer {
@@ -191,4 +204,22 @@ hr {
 
 .head {
 	margin-top:5px;
+}
+
+.subject {
+	font-weight:bold;
+}
+
+.name {
+	font-style:italic;
+}
+
+.greentext {
+	color:green;
+}
+
+.replylink {
+	font-size:11px;
+	text-decoration:underline;
+	margin-left:5px;
 }

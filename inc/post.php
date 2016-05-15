@@ -36,7 +36,10 @@ $name = htmlentities($_POST['namefield'], ENT_QUOTES, "utf-8");
 if($parent == 0)
 	$subject = htmlentities($_POST['subjectfield'], ENT_QUOTES, "utf-8");
 $text = htmlentities($_POST['textfield'], ENT_QUOTES, "utf-8");
-$uploadedimage = $_FILES['imagefield'];
+if($config['textonly'] == 1)
+	$uploadedimage['tmp_name'] = "";
+else
+	$uploadedimage = $_FILES['imagefield'];
 $ip = $_SERVER['REMOTE_ADDR'];
 $lastreply = 0;
 $fileupload = false;
@@ -48,7 +51,10 @@ if(substr_count($text, "\n" ) > 20) {
 	error("Post detected as spam");
 }
 
-if(strlen($text) < $config['minmessagechars'] || strlen($text) > $config['maxmessagechars'])
+if(!$config['allowimageonly'] && (strlen($text) < $config['minmessagechars'] || strlen($text) > $config['maxmessagechars']))
+	error("Message field length needs to be between " . $config['minmessagechars'] . " and " . $config['maxmessagechars'] . " characters");
+
+if($config['allowimageonly'] && $uploadedimage['tmp_name'] == "" && strlen($text) < $config['minmessagechars'] || strlen($text) > $config['maxmessagechars'])
 	error("Message field length needs to be between " . $config['minmessagechars'] . " and " . $config['maxmessagechars'] . " characters");
 
 if($name == "")
@@ -64,7 +70,7 @@ checkFlooding($conn, $ip, $board, $parent);
 if($uploadedimage['error'] === 1)
 	error("An error occurred uploading image");
 
-if($uploadedimage['tmp_name'] != "") {
+if($uploadedimage['tmp_name'] != "" && $config['textonly'] != 1) {
 	// temp file exists
 	$imageinfo = getimagesize($uploadedimage['tmp_name']);
 	$filesize = filesize($uploadedimage['tmp_name']);
@@ -138,7 +144,14 @@ if($parent == 0) {
 		error("Error updating database: " . $ex);
 	}
 }
-	
+
+// if max threads exceeded, delete last
+$numthreads = totalThreads($conn, $board);
+if($parent == 0 && $numthreads > $config['threadlimit']) {
+	$numexceeded = $numthreads - $config['threadlimit'];
+	pruneThreads($conn, $board, $numexceeded);
+}
+
 // recreate board static pages
 createBoardIndex($conn, $board);
 createCataloguePage($conn, $board);

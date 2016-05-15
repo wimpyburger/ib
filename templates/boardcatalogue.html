@@ -20,8 +20,9 @@
 			{% if thread.filename is not null %}
 				<img src="{{ config.siteurl }}/{{ board.urlid }}/thumb/{{ thread.filename }}">
 			{% endif %}
-			<div class="message">{{ thread.message|raw|nl2br }}</div>
 			<div class="replies">{{ thread.numReplies }} Replies - {{ thread.numImageReplies }} Images</div>
+			<span class="subject">{{ thread.subject }}</span>
+			<div class="message">{{ thread.message|raw|nl2br }}</div>
 		</div>
 	{% endfor %}
 {% endblock %}

@@ -7,13 +7,13 @@ require "templates.php";
 $conn = sqlConnect();
 
 if(!isset($_GET['board'])) {
-	error("Board doesn't exist");
+	die("<div class=\"thread\">Board doesn't exist</div>");
 }
 if(!boardExists($conn, $_GET['board'])) {
-	error("Board doesn't exist");
+	die("<div class=\"thread\">Board doesn't exist</div>");
 }
 if(!is_numeric($_GET['id'])) {
-	error("Invalid post number");
+	die("<div class=\"thread\">Invalid post number</div>");
 }
 
 $post = getPost($conn, $_GET['board'], $_GET['id']);

@@ -3,9 +3,18 @@
 {% else %}
 <div class="reply">
 {% endif %}
-	<b>{{ post.subject }}</b> <i>{{ post.name }}</i>
-	<small>{{ post.date|date("d/m/y H:i:s") }}</small> No.{{ post.id }}
-	<br>
+	<div class="postinfo">
+		{% if post.subject != "" %}
+			<span class="subject">{{ post.subject|raw }}</span>
+		{% endif %}
+		<span class="name">{{ post.name|raw }}</span>
+		{{ post.date|date("d/m/y H:i:s") }}
+		
+		<span class="postnum">
+			<a href="#{{ post.id }}">No.</a><a href="#" class="postid">{{ post.id }}</a>
+		</span>
+	</div>
+	
 	{% if post.filename is not null %}
 		<a href="{{ config.siteurl }}/{{ board }}/src/{{ post.filename }}" class="imagelink"><img src="{{ config.siteurl }}/{{ board }}/thumb/{{ post.filename }}" class="image"></a>
 	{% endif %}

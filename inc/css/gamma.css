@@ -7,36 +7,21 @@ body {
 	font-size:14px;
 }
 
-.threadmain {
-	padding:10px;
-	margin-bottom:10px;
+.threadmain, .threadreply {
 	background:#FFF;
-	overflow:hidden;
-	border-bottom:1px solid #DDD;
-}
-
-.threadmain .op {
-	margin-bottom:10px;
-}
-
-.threadreply {
-	margin-bottom:5px;
-}
-
-.threadreply .op {
 	padding:10px;
-	background:#FFF;
 	border-bottom:1px solid #DDD;
 	overflow:hidden;
-	margin-bottom:5px;
+	margin-bottom:12px;
 }
 
 .reply {
-	background:#E5E5E5;
+	background:#EEE;
 	padding:10px;
-	border-bottom:1px solid #CCC;
+	border-bottom:1px solid #DDD;
 	overflow:hidden;
-	margin-bottom:5px;
+	margin-top:5px;
+	display:table;
 }
 
 .selected {
@@ -44,25 +29,28 @@ body {
 	padding:10px;
 	border-bottom:1px solid #BBB;
 	overflow:hidden;
-	margin-bottom:5px;
+	margin-top:5px;
+	display:table;
 }
 
 .image {
 	float:left;
-	margin-right:5px;
+	margin-right:8px;
 }
 
 .message {
-	margin-left:15px;
-	margin-top:5px;
-	display:inline-block;
 	word-break:break-all;
+	display:inline-block;
+	margin-left:12px;
+	margin-right:12px;
+	margin-top:5px;
 }
 
 .notif {
 	margin-top:5px;
-	background:#BFDFFF;
+	background: #BFDFFF;
 	padding:4px;
+	border:1px solid #DDD;
 }
 
 table {
@@ -96,8 +84,7 @@ a:hover {
 
 .replies {
 	color:#777;
-	float:right;
-	font-size:14px;
+	font-size:12px;
 }
 
 form {
@@ -140,10 +127,19 @@ form select {
 	width:300px;
 }
 
+.preview {
+	position:absolute;
+	display:inline-block;
+	margin-top:-8px;
+	color:#000;
+	font-size:14px;
+}
+
 .preview  .thread {
-	border:1px solid #DDD;
 	overflow:hidden;
+	border:1px solid #DDD;
 	padding:5px;
+	background:#FFF;
 }
 
 .footer {
@@ -248,6 +244,7 @@ form input[type=button].reset {
 .subject {
 	font-weight:bold;
 	color:#cc1105;
+	font-style:italic;
 }
 
 .name {
@@ -255,10 +252,13 @@ form input[type=button].reset {
 	color:green;
 }
 
-.thread .reply {
-	margin-top:8px;
-}
-
 .greentext {
 	color:#9ABB44;
+}
+
+.replylink {
+	font-size:11px;
+	text-decoration:underline;
+	margin-left:5px;
+	display:inline-block;
 }

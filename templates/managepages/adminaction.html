@@ -1,0 +1,26 @@
+{% extends "basepage.html" %}
+
+{% block head %}
+	<title>{{ config.sitename }}</title>
+{% endblock %}
+
+{% block content %}
+	<h1>{{ config.sitename }} - <a href="manage.php">Manage</a></h1>
+	<fieldset>
+		<legend>Admin activity</legend>
+			<table>
+				<tr>
+					<th>ID</th>
+					<th>Info</th>
+					<th>Date</th>
+				</tr>
+				{% for action in adminactions %}
+					<tr>
+						<td>{{ action.accountid }}</td>
+						<td>{{ action.info }}</td>
+						<td>{{ action.date }}</td>
+					</tr>
+				{% endfor %}
+			</table>
+	</fieldset>
+{% endblock %}

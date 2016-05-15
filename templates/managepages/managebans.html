@@ -10,29 +10,30 @@
 	<fieldset>
 		<legend>Manage Bans</legend>
 			{% if ip is null %}
-			All active bans
+				All active bans
 			{% else %}
-			All bans for ip {{ ip }}<br>
-			<a href="?managebans">View all active bans</a>
+				All bans for ip {{ ip }}<br>
+				<a href="?managebans">View all active bans</a>
 			{% endif %}
 			<table>
-			<tr>
-				<th>ID</th>
-				<th>IP</th>
-				<th>Reason</th>
-				<th>Date</th>
-				<th>Expires</th>
-				<th></th>
-			</tr>
-			{% for ban in bans %}
 				<tr>
-					<td>{{ ban.id }}</td>
-					<td><a href="?managebans&ip={{ ban.ip }}">{{ ban.ip }}</a></td>
-					<td>{{ ban.reason }}</td>
-					<td>{{ ban.date }}</td>
-					<td>{{ ban.expires }}</td>
-					<td><a href="?unbanuser&ip={{ ban.ip }}">Unban</a></td>
+					<th>ID</th>
+					<th>IP</th>
+					<th>Reason</th>
+					<th>Date</th>
+					<th>Expires</th>
+					<th></th>
 				</tr>
-			{% endfor %}
+				{% for ban in bans %}
+					<tr>
+						<td>{{ ban.id }}</td>
+						<td><a href="?managebans&ip={{ ban.ip }}">{{ ban.ip }}</a></td>
+						<td>{{ ban.reason }}</td>
+						<td>{{ ban.date }}</td>
+						<td>{{ ban.expires }}</td>
+						<td><a href="?unbanuser&ip={{ ban.ip }}">Unban</a></td>
+					</tr>
+				{% endfor %}
+			</table>
 	</fieldset>
 {% endblock %}

@@ -12,6 +12,7 @@
 			<tr>
 				<th>ID</th>
 				<th>Username</th>
+				<th>Type</th>
 				<th></th>
 				<th></th>
 			</tr>
@@ -19,6 +20,7 @@
 				<tr>
 					<td>{{ user.id }}</td>
 					<td>{{ user.username }}</td>
+					<td>{{ config.accounttypes[user.type] }}</td>
 					<td><a href="?editaccount&id={{ user.id }}">Edit</a></td>
 					{% if user.username == username %}
 						<td>Can't delete</td>

@@ -7,11 +7,16 @@ body {
 	font-size:14px;
 }
 
+h1 {
+	font-family: Tahoma,sans-serif;
+	letter-spacing: -2px;
+}
+
 fieldset {
 	margin-bottom:12px;
 }
 
-.thread {
+.threadmain, .threadreply {
 	padding:10px;
 	border-bottom:1px solid #BBB;
 	overflow:hidden;
@@ -26,6 +31,7 @@ fieldset {
     border-top:none;
 	overflow:hidden;
 	margin-top:5px;
+	display:table;
 }
 
 .selected {
@@ -36,10 +42,12 @@ fieldset {
     border-top:none;
 	overflow:hidden;
 	margin-top:5px;
+	display:table;
 }
 
 .image {
 	float:left;
+	margin-right:8px;
 }
 
 .message {
@@ -121,10 +129,22 @@ form textarea {
 	box-sizing:border-box;
 	width:300px;
 	height:80px;
+	resize:vertical;
 }
 
 .preview {
-	border:1px solid #AAA;
+	position:absolute;
+	display:inline-block;
+	margin-top:10px;
+	color:#000;
+	font-size:14px;
+}
+
+.preview  .thread {
+	overflow:hidden;
+	border:1px solid #B7C5D9;
+	padding:5px;
+	background:#EEF2FF;
 }
 
 .footer {
@@ -220,4 +240,37 @@ h1 {
 
 .head {
 	margin-top:5px;
+}
+
+.changed {
+	background:#AFA;
+	border:1px solid #5A5;
+	width:250px;
+	padding:2px;
+}
+
+form input[type=button].reset {
+	width:50px;
+	margin-left:-5px;
+}
+
+.subject {
+	font-weight:bold;
+	color:#cc1105;
+}
+
+.name {
+	font-weight:bold;
+	color:green;
+}
+
+.greentext {
+	color:green;
+}
+
+.replylink {
+	font-size:11px;
+	text-decoration:underline;
+	margin-left:5px;
+	display:inline-block;
 }

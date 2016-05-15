@@ -13,6 +13,12 @@
 				<input type="text" name="createusername" id="createusername"><br>
 				<label for="createpassword">Password</label>
 				<input type="password" name="createpassword" id="createpassword"><br>
+				<label for="createtype">Type</label>
+				<select name="createtype" id="createtype">
+					{% for key, type in config.accounttypes %}
+						<option value="{{ key }}">{{ type }}</option>
+					{% endfor %}
+				</select>
 				<input type="submit" value="Create Account">
 			</form>
 	</fieldset>

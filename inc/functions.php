@@ -93,15 +93,15 @@ function createBoard($conn, $title, $urlid) {
 	mkdir($config['rootdir'] . "/" . $urlid . "/src", 0755, true);
 	mkdir($config['rootdir'] . "/" . $urlid . "/thumb", 0755, true);
 	
-	createBoardIndex($conn, $urlid);
-	createSiteIndex($conn);
-	
 	// create config file
 	$configcontents = "<?php\n\n// use this file to overwrite defaults from inc/config.php\n\n?>";
 	$configfile = fopen($config['rootdir'] . $urlid . "/config.php", "w+");
 	if (fwrite($configfile, $configcontents) === 0) {
         error("Couldn't create config file");
     }
+	
+	createBoardIndex($conn, $urlid);
+	createSiteIndex($conn);
 }
 
 function deleteDir($dir) {
@@ -120,6 +120,13 @@ function deleteDir($dir) {
 		}
 	}
 	return rmdir($dir);
+}
+
+function addAdminAction($conn, $id, $info) {
+	$stmt = $conn->prepare("INSERT INTO adminaction (accountid, info) VALUES (:accountid, :info)"); // get threads
+	$stmt->bindParam(':accountid', $id, PDO::PARAM_INT);
+	$stmt->bindParam(':info', $info, PDO::PARAM_STR);
+	$stmt->execute();
 }
 
 function deleteBoard($conn, $urlid) {
@@ -152,7 +159,7 @@ function getBoards($conn) {
 
 function getUsers($conn) {
 	try {
-		$usersquery = $conn->query("SELECT id, username FROM users");
+		$usersquery = $conn->query("SELECT id, username, type FROM users");
 		$usersquery->execute();
 		$users = $usersquery->fetchAll(PDO::FETCH_ASSOC);
 	} catch(PDOException $ex) {
@@ -160,6 +167,22 @@ function getUsers($conn) {
 		return false;
 	}
 	return $users;
+}
+
+function getUser($conn, $id) {
+	$stmt = $conn->prepare("SELECT id, username, type FROM users WHERE id = :id");
+	$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+	$stmt->execute();
+	$user = $stmt->fetch(PDO::FETCH_ASSOC);
+	return $user;
+}
+
+function getUserType($conn, $username) {
+	$stmt = $conn->prepare("SELECT type FROM users WHERE username = :username");
+	$stmt->bindParam(':username', $username, PDO::PARAM_STR);
+	$stmt->execute();
+	$user = $stmt->fetch(PDO::FETCH_ASSOC);
+	return $user['type'];
 }
 
 function fileExists($conn, $urlid, $hash) {
@@ -204,6 +227,10 @@ function recreateConfig() {
 	foreach($config as $key=>$value) {
 		if($key == 'rootdir') {
 			$configcontents .= '$config[\'rootdir\'] = dirname(__FILE__) . "/../";' . "\n";
+		} else if(is_array($value)) {
+			$configcontents .= '$config[\'' . $key . '\'] = array("';
+			$configcontents .= implode("\", \"", $value);
+			$configcontents .= "\");\n";
 		} else if(!is_numeric($value)) {
 			$configcontents .= '$config[\'' . $key . '\'] = "' . $value . "\";\n";
 		} else {
@@ -213,6 +240,30 @@ function recreateConfig() {
 	$configcontents .= "\n?>";
 	
 	$configfile = fopen($config['rootdir'] . "inc/config.php", "w+");
+	if (fwrite($configfile, $configcontents) === 0) {
+        error("Couldn't write to file");
+    }
+}
+
+function recreateBoardConfig($newconfig, $board) {
+	global $config;
+	$configcontents = "<?php\n\n";
+	foreach($newconfig as $key=>$value) {
+		if($value != $config[$key]) {
+			if(is_array($value)) {
+				$configcontents .= '$config[\'' . $key . '\'] = array("';
+				$configcontents .= implode("\", \"", $value);
+				$configcontents .= "\");\n";
+			} else if(!is_numeric($value)) {
+				$configcontents .= '$config[\'' . $key . '\'] = "' . $value . "\";\n";
+			} else {
+				$configcontents .= '$config[\'' . $key . '\'] = ' . $value . ";\n";
+			}
+		}
+	}
+	$configcontents .= "\n?>";
+	
+	$configfile = fopen($config['rootdir'] . $board . "/config.php", "w+");
 	if (fwrite($configfile, $configcontents) === 0) {
         error("Couldn't write to file");
     }
@@ -297,6 +348,16 @@ function getReplies($conn, $urlid, $id) {
 	return $result;
 }
 
+function getNumReplies($conn, $urlid, $id, $count) {
+	$stmt = $conn->prepare("SELECT * FROM posts_$urlid WHERE parent = :parentid ORDER by id DESC LIMIT :count");
+	$stmt->bindParam(':parentid', $id, PDO::PARAM_INT);
+	$stmt->bindParam(':count', $count, PDO::PARAM_INT);
+	$stmt->execute();
+	$result = $stmt->fetchAll();
+	$result = array_reverse($result);
+	return $result;
+}
+
 function threadExists($conn, $urlid, $thread) {
 	$stmt = $conn->prepare("SELECT 1 FROM posts_$urlid WHERE id = :thread AND parent = 0");
 	$stmt->bindParam(':thread', $thread, PDO::PARAM_INT);
@@ -306,6 +367,13 @@ function threadExists($conn, $urlid, $thread) {
 	} else {
 		return false;
 	}
+}
+
+function totalThreads($conn, $urlid) {
+	$stmt = $conn->prepare("SELECT COUNT(*) FROM posts_$urlid WHERE parent = 0");
+	$stmt->execute();
+	$result = $stmt->fetch();
+	return $result[0];
 }
 
 function deletePost($conn, $urlid, $postid) {
@@ -342,23 +410,18 @@ function deletePost($conn, $urlid, $postid) {
 	createBoardIndex($conn, $urlid);
 }
 
+function pruneThreads($conn, $urlid, $num) {
+	// get last posts
+	$stmt = $conn->prepare("SELECT * FROM posts_$urlid WHERE parent = '0' ORDER by lastreply LIMIT $num"); // get bottom threads
+	$stmt->execute();
+	$results = $stmt->fetchAll();
+	foreach($results as $result) {
+		deletePost($conn, $urlid, $result['id']);
+	}
+	return $results;
+}
+
 function applyFilters($post, $board) {
-	global $config;
-	// make links work
-	preg_match_all("(http://\S+)", $post, $matches);
-	foreach($matches[0] as $match) {
-		$post = str_replace($match, "<a href=\"$match\">$match</a>", $post);
-	}
-	preg_match_all("(https://\S+)", $post, $matches);
-	foreach($matches[0] as $match) {
-		$post = str_replace($match, "<a href=\"$match\">$match</a>", $post);
-	}
-	// make post numbers work
-	preg_match_all("(&gt;&gt;\S+)", $post, $matches);
-	foreach($matches[0] as $match) {
-		$postnum = substr($match, strlen("&gt;&gt;"));
-		$post = str_replace($match, "<a href=\"{$config['siteurl']}/inc/findpost.php?id={$postnum}&board={$board}\" class=\"quotelink\">$match</a>", $post);
-	}
 	// remove consecutive new lines
 	$post = preg_replace("/[\r\n]+/", "\n", $post);
 	return $post;
